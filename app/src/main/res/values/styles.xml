@@ -1,0 +1,18 @@
+<resources>
+
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">#171f34</item>
+        <item name="colorPrimaryDark">#171f34</item>
+        <item name="colorAccent">#171f34</item>
+    </style>
+
+    <!-- 应用启动页(StartingWindow)的theme -->
+    <style name="StartingWindowTheme" parent="AppTheme">
+        <!-- 可以设置成纯颜色（设置一个和Activity UI相似的背景） -->
+        <item name="android:windowBackground">@color/colorPrimary</item>
+        <item name="android:windowDisablePreview">true</item>
+        <!--也可以设置成一张图片 -->
+        <!--<item name="android:windowBackground">@drawable/startingwindow_bg</item>-->
+    </style>
+
+</resources>
