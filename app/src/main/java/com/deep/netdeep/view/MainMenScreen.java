@@ -50,7 +50,11 @@ public class MainMenScreen extends TBaseScreen {
             userName.setText("点击登陆");
 
         } else {
-            upInfo();
+            try {
+                upInfo();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         signOutTouch.setOnTouchListener((v, event) -> TouchExt.alpTouch(v, event, () ->

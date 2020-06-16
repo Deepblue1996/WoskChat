@@ -69,6 +69,7 @@
     <com.prohua.roundlayout.RoundAngleFrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:layout_marginTop="10dp"
         app:radius="10dp">
 

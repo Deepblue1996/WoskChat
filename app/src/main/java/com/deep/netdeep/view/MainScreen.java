@@ -21,6 +21,8 @@ import com.deep.netdeep.core.CoreApp;
 import com.deep.netdeep.event.LoginSuccessEvent;
 import com.deep.netdeep.event.MainSelectTabEvent;
 import com.deep.netdeep.net.bean.BaseEn;
+import com.deep.netdeep.net.bean.UserChatBean;
+import com.deep.netdeep.net.bean.UserTable;
 import com.deep.netdeep.socket.WebSocketUtil;
 import com.deep.netdeep.socket.WsListener;
 import com.deep.netdeep.util.TouchExt;
@@ -33,8 +35,12 @@ import com.scwang.smartrefresh.layout.header.ClassicsHeader;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.List;
+
 import butterknife.BindView;
 import io.reactivex.disposables.Disposable;
+
+// 242bfdb156569ea8880932009f52779e007e0c81
 
 @DpMainScreen
 @DpStatus(blackFont = true)
@@ -104,6 +110,8 @@ public class MainScreen extends TBaseScreen implements WsListener {
         });
 
         logoImg.setOnTouchListener((v, event) -> TouchExt.alpTouch(v, event, this::logoAnim));
+
+        mainChatScreen.setFather(this);
 
         tabManager = DpTabManager.get(R.id.childFragment, fragmentManager())
                 .add(mainChatScreen)
@@ -216,6 +224,7 @@ public class MainScreen extends TBaseScreen implements WsListener {
         Lag.i("接收到消息:" + text);
         WebChatUtil.get(text, null);
         mainMenScreen.upInfo();
+        mainChatScreen.getOnlineUser();
     }
 
     @SuppressLint("SetTextI18n")

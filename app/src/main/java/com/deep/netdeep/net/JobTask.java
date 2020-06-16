@@ -2,6 +2,9 @@ package com.deep.netdeep.net;
 
 import com.deep.netdeep.net.bean.BaseEn;
 import com.deep.netdeep.net.bean.TokenBean;
+import com.deep.netdeep.net.bean.UserChatBean;
+
+import java.util.List;
 
 import io.reactivex.Observable;
 import retrofit2.http.Field;
@@ -42,5 +45,14 @@ public interface JobTask {
     @FormUrlEncoded
     @POST("/tcpservice_war/loginEffective")
     Observable<BaseEn<String>> loginEffective(@Field("token") String token);
+
+    /**
+     * 获取所有在线用户的信息
+     *
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("/tcpservice_war/userList")
+    Observable<BaseEn<List<UserChatBean>>> userList(@Field("token") String token);
 
 }
