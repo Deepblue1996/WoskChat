@@ -137,7 +137,7 @@ public class MainScreen extends TBaseScreen implements WsListener {
         }
     }
 
-    private void loginAutoConnect() {
+    public void loginAutoConnect() {
         Dove.addGlobalHeader("token", CoreApp.appBean.userBean.token);
         Dove.flyLifeOnlyNet(CoreApp.jobTask.loginEffective(CoreApp.appBean.userBean.token),
                 new Dover<BaseEn<String>>() {
@@ -154,9 +154,12 @@ public class MainScreen extends TBaseScreen implements WsListener {
                         }
                     }
 
+                    @SuppressLint("SetTextI18n")
                     @Override
                     public void die(Disposable d, Throwable throwable) {
                         ToastUtil.showError("NetWork is Error");
+                        messageTv.setText("offline");
+                        mainChatScreen.disconnected();
                     }
                 });
     }

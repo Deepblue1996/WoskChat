@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.deep.dpwork.adapter.DpAdapter;
 import com.deep.dpwork.annotation.DpLayout;
 import com.deep.dpwork.annotation.DpStatus;
+import com.deep.dpwork.util.DBUtil;
 import com.deep.dpwork.util.DTimeUtil;
 import com.deep.dpwork.util.DisplayUtil;
 import com.deep.dpwork.util.InputManagerUtil;
@@ -24,6 +25,7 @@ import com.deep.dpwork.weight.DpRecyclerView;
 import com.deep.netdeep.R;
 import com.deep.netdeep.base.TBaseScreen;
 import com.deep.netdeep.bean.ChatMsgBean;
+import com.deep.netdeep.bean.UserChatMsgBean;
 import com.deep.netdeep.core.CoreApp;
 import com.deep.netdeep.net.bean.BaseEn;
 import com.deep.netdeep.net.bean.UserChatBean;
@@ -96,6 +98,9 @@ public class ChatScreen extends TBaseScreen implements WsListener {
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public void init() {
+
+        initData();
+
         userName.setText(userChatBean.userTable.getUsername());
         backTouch.setOnTouchListener((v, event) -> TouchExt.alpTouch(v, event, this::closeEx));
         sendBt.setOnTouchListener((v, event) -> TouchExt.alpTouch(v, event, () -> {
@@ -116,6 +121,8 @@ public class ChatScreen extends TBaseScreen implements WsListener {
             baseEn.msg = "client msg";
             baseEn.data = stringChatMsgBean;
             WebSocketUtil.get().send(new Gson().toJson(baseEn));
+
+            saveData();
         }));
 
         contentEdit.setOnClickListener(v -> InputManagerUtil.showSoftInputFromWindow(_dpActivity, contentEdit));
@@ -217,6 +224,38 @@ public class ChatScreen extends TBaseScreen implements WsListener {
         WebSocketUtil.get().addListener(this);
     }
 
+    private void initData() {
+
+        boolean haveChat = false;
+
+        for (int i = 0; i < CoreApp.appBean.userChatMsgBeanList.size(); i++) {
+            if(CoreApp.appBean.userChatMsgBeanList.get(i).userChatBean.userTable.getId() == userChatBean.userTable.getId()) {
+                chatMsgBeans.addAll(CoreApp.appBean.userChatMsgBeanList.get(i).chatMsgBeans);
+                haveChat = true;
+                break;
+            }
+        }
+
+        if(!haveChat) {
+            UserChatMsgBean userChatMsgBean = new UserChatMsgBean();
+            userChatMsgBean.userChatBean = userChatBean;
+            userChatMsgBean.chatMsgBeans = new ArrayList<>();
+            CoreApp.appBean.userChatMsgBeanList.add(userChatMsgBean);
+            DBUtil.save(CoreApp.appBean);
+        }
+    }
+
+    private void saveData() {
+
+        for (int i = 0; i < CoreApp.appBean.userChatMsgBeanList.size(); i++) {
+            if(CoreApp.appBean.userChatMsgBeanList.get(i).userChatBean.userTable.getId() == userChatBean.userTable.getId()) {
+                CoreApp.appBean.userChatMsgBeanList.get(i).chatMsgBeans = chatMsgBeans;
+                DBUtil.save(CoreApp.appBean);
+                break;
+            }
+        }
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -237,6 +276,7 @@ public class ChatScreen extends TBaseScreen implements WsListener {
             chatMsgBeans.add(0, stringChatMsgBean.data);
             dpAdapter.notifyDataSetChanged();
             recyclerView.scrollToPosition(0);
+            saveData();
         });
     }
 

@@ -1,6 +1,8 @@
 package com.deep.netdeep.view;
 
 import android.annotation.SuppressLint;
+import android.view.View;
+import android.widget.RelativeLayout;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -16,6 +18,7 @@ import com.deep.netdeep.base.TBaseScreen;
 import com.deep.netdeep.core.CoreApp;
 import com.deep.netdeep.net.bean.BaseEn;
 import com.deep.netdeep.net.bean.UserChatBean;
+import com.deep.netdeep.socket.WebSocketUtil;
 import com.deep.netdeep.socket.WsListener;
 import com.prohua.dove.Dove;
 import com.prohua.dove.Dover;
@@ -30,6 +33,9 @@ import io.reactivex.disposables.Disposable;
 @DpChild
 @DpLayout(R.layout.main_chat_screen)
 public class MainChatScreen extends TBaseScreen implements WsListener {
+
+    @BindView(R.id.offlineLin)
+    RelativeLayout offlineLin;
 
     @BindView(R.id.refreshLayout)
     RefreshLayout refreshLayout;
@@ -55,7 +61,14 @@ public class MainChatScreen extends TBaseScreen implements WsListener {
     }
 
     public void getOnlineUser() {
-        Dove.flyLife(CoreApp.jobTask.userList(CoreApp.appBean.userBean.token),
+        if (!WebSocketUtil.get().isConnected()) {
+            ((MainScreen) baseScreen).loginAutoConnect();
+            return;
+        }
+
+        offlineLin.setVisibility(View.GONE);
+
+        Dove.flyLifeOnlyNet(CoreApp.jobTask.userList(CoreApp.appBean.userBean.token),
                 new Dover<BaseEn<List<UserChatBean>>>() {
                     @SuppressLint("SetTextI18n")
                     @Override
@@ -64,7 +77,7 @@ public class MainChatScreen extends TBaseScreen implements WsListener {
                         userChatBeans.clear();
                         userChatBeans.addAll(loginBeanBaseEn.data);
                         dpAdapter.notifyDataSetChanged();
-                        refreshLayout.finishRefresh();
+                        refreshLayout.finishRefresh(0);
                     }
 
                     @Override
@@ -98,6 +111,8 @@ public class MainChatScreen extends TBaseScreen implements WsListener {
     @Override
     public void connected() {
         refreshLayout.autoRefresh(0);
+
+        offlineLin.setVisibility(View.GONE);
     }
 
     @Override
@@ -107,11 +122,17 @@ public class MainChatScreen extends TBaseScreen implements WsListener {
 
     @Override
     public void disconnected() {
-
+        userChatBeans.clear();
+        dpAdapter.notifyDataSetChanged();
+        refreshLayout.finishRefresh(0);
+        offlineLin.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void failed() {
-
+        userChatBeans.clear();
+        dpAdapter.notifyDataSetChanged();
+        refreshLayout.finishRefresh(0);
+        offlineLin.setVisibility(View.VISIBLE);
     }
 }
