@@ -195,6 +195,7 @@ public class ChatScreen extends TBaseScreen implements WsListener {
 
         // --------------------------------------
 
+
         refreshLayout.setEnableLoadMore(false);
 
         refreshLayout.setOnRefreshListener(refreshLayout -> {
