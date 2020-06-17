@@ -80,6 +80,6 @@ public class LoginScreen extends TBaseScreen {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(LoginSuccessEvent event) {
-        DTimeUtil.run(300, this::closeEx);
+        DTimeUtil.run(300, this::close);
     }
 }

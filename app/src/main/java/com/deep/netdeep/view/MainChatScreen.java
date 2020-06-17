@@ -55,7 +55,7 @@ public class MainChatScreen extends TBaseScreen implements WsListener {
     }
 
     public void getOnlineUser() {
-        Dove.flyLifeOnlyNet(CoreApp.jobTask.userList(CoreApp.appBean.userBean.token),
+        Dove.flyLife(CoreApp.jobTask.userList(CoreApp.appBean.userBean.token),
                 new Dover<BaseEn<List<UserChatBean>>>() {
                     @SuppressLint("SetTextI18n")
                     @Override

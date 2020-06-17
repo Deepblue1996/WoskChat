@@ -7,11 +7,43 @@
     android:background="@color/mBackGround"
     android:orientation="vertical">
 
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+        android:id="@+id/refreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/centerBottom"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/topLin"
+        app:srlAccentColor="#666666"
+        app:srlEnablePreviewInEditMode="true">
+        <!--srlAccentColor srlPrimaryColor 将会改变 Header 和 Footer 的主题颜色-->
+        <!--srlEnablePreviewInEditMode 可以开启和关闭预览功能-->
+        <com.scwang.smartrefresh.layout.header.ClassicsHeader
+            android:id="@+id/classHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <com.deep.dpwork.weight.DpRecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </com.deep.dpwork.weight.DpRecyclerView>
+
+        <com.scwang.smartrefresh.layout.footer.ClassicsFooter
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
     <LinearLayout
+        android:id="@+id/topLin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <com.deep.dpwork.weight.StatusBarPaddingView
@@ -31,13 +63,22 @@
 
             <TextView
                 android:id="@+id/userName"
-                android:layout_centerInParent="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
                 android:text="UserName"
-                android:textStyle="bold"
                 android:textColor="@color/darkText"
-                android:textSize="@dimen/normalFontSize" />
+                android:textSize="@dimen/normalFontSize"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/infoMemTouch"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignParentEnd="true"
+                android:padding="10dp"
+                android:src="@mipmap/ic_men_info" />
+
         </RelativeLayout>
     </LinearLayout>
 
@@ -51,20 +92,22 @@
         app:layout_constraintRight_toRightOf="parent">
 
         <RelativeLayout
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
-            android:paddingTop="10dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingStart="10dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="10dp"
+            android:paddingBottom="10dp">
 
             <com.prohua.roundlayout.RoundAngleFrameLayout
-                android:layout_toLeftOf="@+id/sendBt"
-                android:layout_marginEnd="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="10dp"
+                android:layout_toStartOf="@+id/bianLinBt"
                 app:radius="10dp">
 
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="35dp"
                     android:background="@color/backGround">
@@ -76,39 +119,82 @@
                         android:background="@color/transparent"
                         android:gravity="center_vertical"
                         android:hint="Enter what you want"
+                        android:maxLines="3"
+                        android:scrollHorizontally="true"
                         android:paddingStart="10dp"
                         android:paddingEnd="10dp"
-                        android:lines="1"
                         android:textColor="@color/darkText"
                         android:textSize="@dimen/smallSFontSize" />
-                </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/inputImg"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:layout_alignParentEnd="true"
+                        android:padding="5dp"
+                        android:src="@mipmap/ic_getin" />
+                </RelativeLayout>
             </com.prohua.roundlayout.RoundAngleFrameLayout>
 
-            <com.prohua.roundlayout.RoundAngleFrameLayout
+            <LinearLayout
+                android:id="@+id/bianLinBt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/sendBt"
                 android:layout_alignParentEnd="true"
-                app:radius="10dp">
+                android:layout_centerVertical="true"
+                android:gravity="center_vertical">
 
-                <LinearLayout
+                <ImageView
+                    android:id="@+id/moreDoTouch"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@mipmap/ic_more" />
+
+                <com.prohua.roundlayout.RoundAngleFrameLayout
+                    android:id="@+id/sendBt"
                     android:layout_width="wrap_content"
-                    android:layout_height="35dp"
-                    android:background="@color/blue"
-                    android:gravity="center"
-                    android:paddingStart="20dp"
-                    android:paddingEnd="20dp">
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:visibility="gone"
+                    app:radius="10dp">
 
-                    <TextView
+                    <LinearLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Send"
-                        android:textColor="@color/mBackGround"
-                        android:textSize="@dimen/smallSFontSize" />
-                </LinearLayout>
-            </com.prohua.roundlayout.RoundAngleFrameLayout>
+                        android:layout_height="30dp"
+                        android:background="@color/blue"
+                        android:gravity="center"
+                        android:paddingStart="15dp"
+                        android:paddingEnd="15dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Send"
+                            android:textColor="@color/mBackGround"
+                            android:textSize="@dimen/smallSFontSize" />
+                    </LinearLayout>
+                </com.prohua.roundlayout.RoundAngleFrameLayout>
+
+            </LinearLayout>
 
         </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/moreLin"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="todo..."
+                android:textColor="@color/normalText"
+                android:textSize="@dimen/normalFontSize"
+                android:textStyle="bold" />
+        </LinearLayout>
 
     </LinearLayout>
 

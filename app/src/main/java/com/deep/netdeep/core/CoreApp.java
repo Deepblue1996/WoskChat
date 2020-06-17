@@ -30,8 +30,7 @@ public class CoreApp extends DpWorkApplication {
 
     // 服务器地址
     @DoveInit(url = "http://192.168.0.112:8080/",
-            interfaceClass = JobTask.class)
-
+            interfaceClass = JobTask.class, connectTime = 2)
     // 网络框架
     public static JobTask jobTask;
 

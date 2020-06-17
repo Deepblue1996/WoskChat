@@ -34,13 +34,13 @@ public class SignUpLoadingDialogScreen extends TDialogScreen {
                         } else {
                             ToastUtil.showError(loginBeanBaseEn.msg);
                         }
-                        SignUpLoadingDialogScreen.this.closeEx();
+                        SignUpLoadingDialogScreen.this.close();
                     }
 
                     @Override
                     public void die(Disposable d, Throwable throwable) {
                         ToastUtil.showError("NetWork is Error");
-                        SignUpLoadingDialogScreen.this.closeEx();
+                        SignUpLoadingDialogScreen.this.close();
                     }
                 });
     }

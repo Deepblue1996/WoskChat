@@ -1,5 +1,6 @@
 package com.deep.netdeep.util;
 
+import com.deep.netdeep.bean.ChatMsgBean;
 import com.deep.netdeep.core.CoreApp;
 import com.deep.netdeep.net.bean.BaseEn;
 import com.deep.netdeep.net.bean.TokenChatBean;
@@ -34,7 +35,7 @@ public class WebChatUtil {
                 baseEn.data = tokenChatUBean;
                 WebSocketUtil.get().send(new Gson().toJson(baseEn));
                 if(endListener!=null) {
-                    endListener.end();
+                    endListener.end(null);
                 }
                 break;
             case 20000:
@@ -47,7 +48,7 @@ public class WebChatUtil {
                 tokenChatUBeanBaseEn.data = CoreApp.tokenChatUBean;
                 WebSocketUtil.get().send(new Gson().toJson(tokenChatUBeanBaseEn));
                 if(endListener!=null) {
-                    endListener.end();
+                    endListener.end(null);
                 }
                 break;
         }
@@ -77,10 +78,20 @@ public class WebChatUtil {
                  * 不会回复，无效断开服务器会话
                  */
                 break;
+            case 30000:
+                /**
+                 * 消息
+                 */
+                Type type2 = new TypeToken<BaseEn<ChatMsgBean<?>>>(){}.getType();
+                BaseEn<ChatMsgBean<?>> tokenChatUBeanBaseEn2 = new Gson().fromJson(msg, type2);
+                if(endListener!=null) {
+                    endListener.end(tokenChatUBeanBaseEn2);
+                }
+                break;
         }
     }
 
     public interface EndListener {
-        void end();
+        void end(Object object);
     }
 }

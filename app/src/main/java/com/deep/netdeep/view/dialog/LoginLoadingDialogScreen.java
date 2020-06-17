@@ -46,14 +46,14 @@ public class LoginLoadingDialogScreen extends TDialogScreen implements WsListene
                         } else {
                             ToastUtil.showError(loginBeanBaseEn.msg);
                             EventBus.getDefault().post(new LoginSuccessEvent());
-                            LoginLoadingDialogScreen.this.closeEx();
+                            LoginLoadingDialogScreen.this.close();
                         }
                     }
 
                     @Override
                     public void die(Disposable d, Throwable throwable) {
                         ToastUtil.showError("NetWork is Error");
-                        LoginLoadingDialogScreen.this.closeEx();
+                        LoginLoadingDialogScreen.this.close();
                     }
                 });
     }
@@ -76,9 +76,9 @@ public class LoginLoadingDialogScreen extends TDialogScreen implements WsListene
         Lag.i("接收到消息:" + text);
         WebChatUtil.get(text, new WebChatUtil.EndListener() {
             @Override
-            public void end() {
+            public void end(Object object) {
                 EventBus.getDefault().post(new LoginSuccessEvent());
-                LoginLoadingDialogScreen.this.closeEx();
+                LoginLoadingDialogScreen.this.close();
             }
         });
     }
@@ -89,7 +89,7 @@ public class LoginLoadingDialogScreen extends TDialogScreen implements WsListene
         DBUtil.save(CoreApp.appBean);
         ToastUtil.showError("Failed to connect to server");
         //EventBus.getDefault().post(new LoginSuccessEvent());
-        LoginLoadingDialogScreen.this.closeEx();
+        LoginLoadingDialogScreen.this.close();
     }
 
     @Override
@@ -98,6 +98,6 @@ public class LoginLoadingDialogScreen extends TDialogScreen implements WsListene
         DBUtil.save(CoreApp.appBean);
         ToastUtil.showError("Failed to connect to server");
         //EventBus.getDefault().post(new LoginSuccessEvent());
-        LoginLoadingDialogScreen.this.closeEx();
+        LoginLoadingDialogScreen.this.close();
     }
 }
