@@ -48,7 +48,6 @@
 
             <TextView
                 android:id="@+id/userContent"
-                android:text="Every day is Happy."
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/normalText"

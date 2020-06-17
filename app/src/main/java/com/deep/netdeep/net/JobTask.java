@@ -7,9 +7,13 @@ import com.deep.netdeep.net.bean.UserChatBean;
 import java.util.List;
 
 import io.reactivex.Observable;
+import okhttp3.MultipartBody;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.Header;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 
 /**
  * Class -
@@ -54,5 +58,16 @@ public interface JobTask {
     @FormUrlEncoded
     @POST("/tcpservice_war/userList")
     Observable<BaseEn<List<UserChatBean>>> userList(@Field("token") String token);
+
+    /**
+     * 上传头像
+     *
+     * @param token token
+     * @param files 文件
+     * @return
+     */
+    @Multipart
+    @POST("/tcpservice_war/fileUploadHeadPortrait")
+    Observable<BaseEn<String>> fileUploadHeadPortrait(@Header("token") String token, @Part MultipartBody.Part files);
 
 }

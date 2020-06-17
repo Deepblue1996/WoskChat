@@ -15,6 +15,7 @@ import com.deep.dpwork.util.ToastUtil;
 import com.deep.dpwork.weight.DpRecyclerView;
 import com.deep.netdeep.R;
 import com.deep.netdeep.base.TBaseScreen;
+import com.deep.netdeep.bean.ChatMsgBean;
 import com.deep.netdeep.core.CoreApp;
 import com.deep.netdeep.net.bean.BaseEn;
 import com.deep.netdeep.net.bean.UserChatBean;
@@ -97,6 +98,14 @@ public class MainChatScreen extends TBaseScreen implements WsListener {
         dpAdapter = DpAdapter.newLine(getContext(), userChatBeans, R.layout.main_chat_item_layout)
                 .itemView((universalViewHolder, i) -> {
                     universalViewHolder.setText(R.id.userName, userChatBeans.get(i).userTable.getUsername());
+                    for (int j = 0; j < CoreApp.appBean.userChatMsgBeanList.size(); j++) {
+                        if (CoreApp.appBean.userChatMsgBeanList.get(j).userChatBean.userTable.getId() == userChatBeans.get(i).userTable.getId()) {
+                            ChatMsgBean chatMsgBean = CoreApp.appBean.userChatMsgBeanList.get(j).chatMsgBeans.get(j);
+                            if (chatMsgBean.type == 0) {
+                                universalViewHolder.setText(R.id.userContent, (String) (chatMsgBean.data));
+                            }
+                        }
+                    }
                 })
                 .itemClick((view, i) -> {
                     ChatScreen chatScreen = ChatScreen.newInstance();
@@ -106,6 +115,11 @@ public class MainChatScreen extends TBaseScreen implements WsListener {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(dpAdapter);
+    }
+
+    @Override
+    public void showScreen() {
+        dpAdapter.notifyDataSetChanged();
     }
 
     @Override

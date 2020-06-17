@@ -45,15 +45,14 @@ public class LoginLoadingDialogScreen extends TDialogScreen implements WsListene
                             WebSocketUtil.get().connect();
                         } else {
                             ToastUtil.showError(loginBeanBaseEn.msg);
-                            EventBus.getDefault().post(new LoginSuccessEvent());
-                            LoginLoadingDialogScreen.this.close();
+                            LoginLoadingDialogScreen.this.closeEx();
                         }
                     }
 
                     @Override
                     public void die(Disposable d, Throwable throwable) {
                         ToastUtil.showError("NetWork is Error");
-                        LoginLoadingDialogScreen.this.close();
+                        LoginLoadingDialogScreen.this.closeEx();
                     }
                 });
     }

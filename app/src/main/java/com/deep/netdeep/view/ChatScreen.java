@@ -79,6 +79,7 @@ public class ChatScreen extends TBaseScreen implements WsListener {
     private DpAdapter dpAdapter;
 
     private boolean hasTeSuHeight = false;
+    private boolean isShowSoft = false;
 
     private UserChatBean userChatBean;
 
@@ -159,6 +160,10 @@ public class ChatScreen extends TBaseScreen implements WsListener {
                 } else {
                     layoutParams.bottomMargin = i;
                 }
+                if (isShowSoft) {
+                    recyclerView.scrollToPosition(0);
+                }
+                isShowSoft = false;
             } else {
                 if (moreLin.getVisibility() == View.VISIBLE) {
                     moreLin.setVisibility(View.GONE);
@@ -169,8 +174,13 @@ public class ChatScreen extends TBaseScreen implements WsListener {
                 } else {
                     layoutParams.bottomMargin = i;
                 }
+                if (!isShowSoft) {
+                    recyclerView.scrollToPosition(0);
+                    isShowSoft = true;
+                }
             }
             centerBottom.setLayoutParams(layoutParams);
+
         });
 
         moreDoTouch.setOnTouchListener((v, event) ->
@@ -220,6 +230,8 @@ public class ChatScreen extends TBaseScreen implements WsListener {
                 LinearLayoutManager.VERTICAL, true));
         recyclerView.setAdapter(dpAdapter);
 
+        recyclerView.scrollToPosition(0);
+
         WebSocketUtil.get().addListener(this);
     }
 
@@ -228,14 +240,14 @@ public class ChatScreen extends TBaseScreen implements WsListener {
         boolean haveChat = false;
 
         for (int i = 0; i < CoreApp.appBean.userChatMsgBeanList.size(); i++) {
-            if(CoreApp.appBean.userChatMsgBeanList.get(i).userChatBean.userTable.getId() == userChatBean.userTable.getId()) {
+            if (CoreApp.appBean.userChatMsgBeanList.get(i).userChatBean.userTable.getId() == userChatBean.userTable.getId()) {
                 chatMsgBeans.addAll(CoreApp.appBean.userChatMsgBeanList.get(i).chatMsgBeans);
                 haveChat = true;
                 break;
             }
         }
 
-        if(!haveChat) {
+        if (!haveChat) {
             UserChatMsgBean userChatMsgBean = new UserChatMsgBean();
             userChatMsgBean.userChatBean = userChatBean;
             userChatMsgBean.chatMsgBeans = new ArrayList<>();
@@ -247,7 +259,7 @@ public class ChatScreen extends TBaseScreen implements WsListener {
     private void saveData() {
 
         for (int i = 0; i < CoreApp.appBean.userChatMsgBeanList.size(); i++) {
-            if(CoreApp.appBean.userChatMsgBeanList.get(i).userChatBean.userTable.getId() == userChatBean.userTable.getId()) {
+            if (CoreApp.appBean.userChatMsgBeanList.get(i).userChatBean.userTable.getId() == userChatBean.userTable.getId()) {
                 CoreApp.appBean.userChatMsgBeanList.get(i).chatMsgBeans = chatMsgBeans;
                 DBUtil.save(CoreApp.appBean);
                 break;

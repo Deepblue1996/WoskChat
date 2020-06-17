@@ -1,14 +1,16 @@
 package com.deep.netdeep.core;
 
 import android.Manifest;
+import android.content.Intent;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.deep.dpwork.DpWorkCore;
-import com.deep.dpwork.annotation.DpDataBase;
 import com.deep.dpwork.annotation.DpPermission;
-import com.deep.dpwork.annotation.net.DoveInit;
-import com.deep.netdeep.bean.AppBean;
-import com.deep.netdeep.net.JobTask;
-import com.prohua.dove.Dove;
+import com.deep.dpwork.util.Lag;
+
+import java.util.List;
 
 /**
  * Class - 主活动类
@@ -33,6 +35,11 @@ public class WorkCore extends DpWorkCore {
     @Override
     protected void permissionComplete(boolean b) {
 
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
 }
