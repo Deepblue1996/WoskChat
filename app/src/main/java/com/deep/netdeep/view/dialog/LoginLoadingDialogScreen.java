@@ -35,12 +35,8 @@ public class LoginLoadingDialogScreen extends TDialogScreen implements WsListene
                     public void don(Disposable d, BaseEn<TokenBean> loginBeanBaseEn) {
                         Lag.i(loginBeanBaseEn.msg);
                         if (loginBeanBaseEn.code == 200) {
-                            CoreApp.appBean.userBean.token = loginBeanBaseEn.data.token;
-                            TokenBean tokenBean = new TokenBean();
-                            tokenBean.token = loginBeanBaseEn.data.token;
-                            Dove.addGlobalHeader("token", CoreApp.appBean.userBean.token);
-                            CoreApp.appBean.userBean.userName = ((UserLoginEventBean) baseData).username;
-                            CoreApp.appBean.userBean.passWord = ((UserLoginEventBean) baseData).password;
+                            Dove.addGlobalHeader("token", loginBeanBaseEn.data.token);
+                            CoreApp.appBean.tokenBean = loginBeanBaseEn.data;
                             DBUtil.save(CoreApp.appBean);
                             WebSocketUtil.get().connect();
                         } else {
@@ -84,7 +80,7 @@ public class LoginLoadingDialogScreen extends TDialogScreen implements WsListene
 
     @Override
     public void disconnected() {
-        CoreApp.appBean.userBean.token = null;
+        CoreApp.appBean.tokenBean.token = null;
         DBUtil.save(CoreApp.appBean);
         ToastUtil.showError("Failed to connect to server");
         //EventBus.getDefault().post(new LoginSuccessEvent());
@@ -93,7 +89,7 @@ public class LoginLoadingDialogScreen extends TDialogScreen implements WsListene
 
     @Override
     public void failed() {
-        CoreApp.appBean.userBean.token = null;
+        CoreApp.appBean.tokenBean.token = null;
         DBUtil.save(CoreApp.appBean);
         ToastUtil.showError("Failed to connect to server");
         //EventBus.getDefault().post(new LoginSuccessEvent());

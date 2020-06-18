@@ -30,7 +30,7 @@ public class WebChatUtil {
                 baseEn.msg = "login success to connect";
                 TokenChatUBean tokenChatUBean = new TokenChatUBean();
                 TokenChatBean tokenChatBean = new TokenChatBean();
-                tokenChatBean.token = CoreApp.appBean.userBean.token;
+                tokenChatBean.token = CoreApp.appBean.tokenBean.token;
                 tokenChatUBean.tokenChatBean = tokenChatBean;
                 baseEn.data = tokenChatUBean;
                 WebSocketUtil.get().send(new Gson().toJson(baseEn));
@@ -70,7 +70,7 @@ public class WebChatUtil {
                 Type type = new TypeToken<BaseEn<TokenChatUBean>>(){}.getType();
                 BaseEn<TokenChatUBean> tokenChatUBeanBaseEn = new Gson().fromJson(msg, type);
                 CoreApp.tokenChatUBean = tokenChatUBeanBaseEn.data;
-                CoreApp.tokenChatUBean.tokenChatBean.token = CoreApp.appBean.userBean.token;
+                CoreApp.tokenChatUBean.tokenChatBean.token = CoreApp.appBean.tokenBean.token;
                 put(20000, endListener);
                 break;
             case 20000:

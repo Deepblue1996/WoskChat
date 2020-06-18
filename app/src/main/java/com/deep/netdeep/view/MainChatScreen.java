@@ -1,7 +1,10 @@
 package com.deep.netdeep.view;
 
 import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -21,10 +24,13 @@ import com.deep.netdeep.net.bean.BaseEn;
 import com.deep.netdeep.net.bean.UserChatBean;
 import com.deep.netdeep.socket.WebSocketUtil;
 import com.deep.netdeep.socket.WsListener;
+import com.deep.netdeep.util.FileToBase64Util;
+import com.deep.netdeep.util.ImgPhotoUtil;
 import com.prohua.dove.Dove;
 import com.prohua.dove.Dover;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,7 +75,7 @@ public class MainChatScreen extends TBaseScreen implements WsListener {
 
         offlineLin.setVisibility(View.GONE);
 
-        Dove.flyLifeOnlyNet(CoreApp.jobTask.userList(CoreApp.appBean.userBean.token),
+        Dove.flyLifeOnlyNet(CoreApp.jobTask.userList(CoreApp.appBean.tokenBean.token),
                 new Dover<BaseEn<List<UserChatBean>>>() {
                     @SuppressLint("SetTextI18n")
                     @Override
@@ -106,6 +112,8 @@ public class MainChatScreen extends TBaseScreen implements WsListener {
                             }
                         }
                     }
+
+                    ImgPhotoUtil.getPhoto(userChatBeans.get(i).userTable.getHeaderPath(), (ImageView) universalViewHolder.vbi(R.id.headImg));
                 })
                 .itemClick((view, i) -> {
                     ChatScreen chatScreen = ChatScreen.newInstance();

@@ -70,4 +70,14 @@ public interface JobTask {
     @POST("/tcpservice_war/fileUploadHeadPortrait")
     Observable<BaseEn<String>> fileUploadHeadPortrait(@Header("token") String token, @Part MultipartBody.Part files);
 
+
+    /**
+     * 获取图片
+     *
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("/tcpservice_war/rePhoto")
+    Observable<BaseEn<String>> rePhoto(@Field("name") String name);
+
 }

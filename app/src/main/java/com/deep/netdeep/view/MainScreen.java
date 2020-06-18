@@ -83,7 +83,7 @@ public class MainScreen extends TBaseScreen implements WsListener {
     @Override
     public void init() {
 
-        if (CoreApp.appBean.userBean.token == null) {
+        if (CoreApp.appBean.tokenBean.token == null) {
             messageTv.setText("offline");
             open(LoginScreen.class);
         } else {
@@ -97,7 +97,7 @@ public class MainScreen extends TBaseScreen implements WsListener {
             selectTabUI(0);
         });
         mineTouch.setOnClickListener(v -> {
-            if (CoreApp.appBean.userBean.token == null) {
+            if (CoreApp.appBean.tokenBean.token == null) {
                 open(LoginScreen.class);
             } else {
                 tabManager.show(1);
@@ -135,8 +135,8 @@ public class MainScreen extends TBaseScreen implements WsListener {
     }
 
     public void loginAutoConnect() {
-        Dove.addGlobalHeader("token", CoreApp.appBean.userBean.token);
-        Dove.flyLifeOnlyNet(CoreApp.jobTask.loginEffective(CoreApp.appBean.userBean.token),
+        Dove.addGlobalHeader("token", CoreApp.appBean.tokenBean.token);
+        Dove.flyLifeOnlyNet(CoreApp.jobTask.loginEffective(CoreApp.appBean.tokenBean.token),
                 new Dover<BaseEn<String>>() {
                     @SuppressLint("SetTextI18n")
                     @Override

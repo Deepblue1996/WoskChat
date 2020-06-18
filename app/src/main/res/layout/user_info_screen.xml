@@ -4,16 +4,48 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/backGround"
-    android:orientation="vertical"
-    android:padding="10dp">
+    android:orientation="vertical">
 
+    <LinearLayout
+        android:background="@color/mBackGround"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.deep.dpwork.weight.StatusBarPaddingView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/backTouch"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:padding="10dp"
+                android:src="@mipmap/ic_icon_back" />
+
+            <TextView
+                android:text="User Info"
+                android:textSize="@dimen/normalFontSize"
+                android:textColor="@color/darkText"
+                android:layout_centerInParent="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </RelativeLayout>
+    </LinearLayout>
 
     <com.prohua.roundlayout.RoundAngleFrameLayout
         android:layout_width="match_parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
         android:layout_height="wrap_content"
         app:radius="10dp">
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/memberLin"
             android:layout_width="match_parent"
             android:layout_height="80dp"
@@ -23,19 +55,19 @@
 
             <com.prohua.roundlayout.RoundAngleFrameLayout
                 android:layout_width="wrap_content"
-                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
                 app:radius="30dp"
+                android:layout_alignParentEnd="true"
                 android:layout_height="wrap_content">
                 <LinearLayout
                     android:background="#f0f0f0"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp">
+                    android:padding="15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
                     <ImageView
-                        android:id="@+id/headImg"
-                        android:scaleType="centerCrop"
                         android:src="@mipmap/ic_net_deep"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"/>
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"/>
                 </LinearLayout>
             </com.prohua.roundlayout.RoundAngleFrameLayout>
 
@@ -46,15 +78,17 @@
                 android:layout_height="wrap_content">
 
                 <TextView
+                    android:text="Head portrait"
                     android:id="@+id/userName"
                     android:textStyle="bold"
                     android:textColor="@color/darkText"
-                    android:textSize="26sp"
+                    android:textSize="20sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
                 <TextView
                     android:id="@+id/userId"
                     android:layout_marginTop="5dp"
+                    android:text="id: 1"
                     android:lines="1"
                     android:ellipsize="end"
                     android:textColor="@color/darkText"
@@ -63,47 +97,7 @@
                     android:layout_height="wrap_content"/>
             </LinearLayout>
 
-
-        </LinearLayout>
-    </com.prohua.roundlayout.RoundAngleFrameLayout>
-
-
-    <com.prohua.roundlayout.RoundAngleFrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:layout_marginTop="10dp"
-        app:radius="10dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="360dp"
-            android:background="@color/mBackGround">
-
-        </LinearLayout>
-    </com.prohua.roundlayout.RoundAngleFrameLayout>
-
-    <com.prohua.roundlayout.RoundAngleFrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        app:radius="10dp">
-
-        <LinearLayout
-            android:id="@+id/signOutTouch"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="#ff4444"
-            android:gravity="center">
-
-            <TextView
-                android:textSize="@dimen/normalFontSize"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Sign Out"
-                android:textColor="@color/mBackGround"
-                android:textStyle="bold" />
-        </LinearLayout>
+        </RelativeLayout>
     </com.prohua.roundlayout.RoundAngleFrameLayout>
 
 </LinearLayout>

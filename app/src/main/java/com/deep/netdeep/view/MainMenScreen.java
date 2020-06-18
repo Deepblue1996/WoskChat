@@ -2,7 +2,9 @@ package com.deep.netdeep.view;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.os.Bundle;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -15,7 +17,7 @@ import com.deep.dpwork.base.BaseScreen;
 import com.deep.dpwork.dialog.DialogScreen;
 import com.deep.dpwork.dialog.DpDialogScreen;
 import com.deep.dpwork.util.DBUtil;
-import com.deep.dpwork.util.FileOpenHelper;
+import com.deep.dpwork.util.ImageUtil;
 import com.deep.dpwork.util.Lag;
 import com.deep.netdeep.R;
 import com.deep.netdeep.base.TBaseScreen;
@@ -24,6 +26,9 @@ import com.deep.netdeep.event.LoginSuccessEvent;
 import com.deep.netdeep.event.MainSelectTabEvent;
 import com.deep.netdeep.net.bean.BaseEn;
 import com.deep.netdeep.socket.WebSocketUtil;
+import com.deep.netdeep.util.FileToBase64Util;
+import com.deep.netdeep.util.ImageToStringUtil;
+import com.deep.netdeep.util.ImgPhotoUtil;
 import com.deep.netdeep.util.TouchExt;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
@@ -36,15 +41,13 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.ArrayList;
+import java.io.File;
 import java.util.List;
 import java.util.Objects;
 
 import butterknife.BindView;
 import io.reactivex.disposables.Disposable;
-import okhttp3.MediaType;
 import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 
 @DpChild
 @DpLayout(R.layout.main_men_screen)
@@ -58,6 +61,8 @@ public class MainMenScreen extends TBaseScreen {
     TextView userName;
     @BindView(R.id.userId)
     TextView userId;
+    @BindView(R.id.headImg)
+    ImageView headImg;
 
     private BaseScreen baseScreen;
 
@@ -76,7 +81,7 @@ public class MainMenScreen extends TBaseScreen {
     @Override
     public void init() {
 
-        if (CoreApp.appBean.userBean == null || CoreApp.tokenChatUBean.tokenChatBean == null) {
+        if (CoreApp.appBean.tokenBean.token == null || CoreApp.tokenChatUBean.tokenChatBean == null) {
 
             userName.setText("点击登陆");
 
@@ -92,7 +97,7 @@ public class MainMenScreen extends TBaseScreen {
                 DpDialogScreen.create()
                         .setMsg("Are you sure to sign out?")
                         .addButton(getContext(), "Yes", dialogScreen -> {
-                            CoreApp.appBean.userBean.token = null;
+                            CoreApp.appBean.tokenBean.token = null;
                             DBUtil.save(CoreApp.appBean);
                             WebSocketUtil.get().closeWebSocket();
                             EventBus.getDefault().post(new MainSelectTabEvent(0));
@@ -102,6 +107,8 @@ public class MainMenScreen extends TBaseScreen {
                         .open(fragmentManager())));
 
         memberLin.setOnTouchListener((v, event) -> TouchExt.alpTouch(v, event, () -> imgSelect(this)));
+
+        ImgPhotoUtil.getPhoto(CoreApp.appBean.tokenBean.userTable.getHeaderPath(), headImg);
     }
 
 
@@ -130,12 +137,21 @@ public class MainMenScreen extends TBaseScreen {
                 .forResult(PictureConfig.CHOOSE_REQUEST);//结果回调onActivityResult code
     }
 
+    /**
+     * 上传头像
+     * @param pathName
+     */
     private void upLoadHead(String pathName) {
         MultipartBody.Part filePartList = Dove.filePart("file", pathName);
-        Dove.flyLife(CoreApp.jobTask.fileUploadHeadPortrait(CoreApp.appBean.userBean.token, filePartList), new Dover<BaseEn<String>>() {
+        Dove.flyLifeOnlyNet(CoreApp.jobTask.fileUploadHeadPortrait(CoreApp.appBean.tokenBean.token, filePartList), new Dover<BaseEn<String>>() {
             @Override
             public void don(Disposable d, BaseEn<String> stringBaseEn) {
                 Lag.i("上传成功");
+
+                CoreApp.appBean.tokenBean.userTable.setHeaderPath(stringBaseEn.data);
+                DBUtil.save(CoreApp.appBean);
+
+                ImgPhotoUtil.getPhoto(CoreApp.appBean.tokenBean.userTable.getHeaderPath(), headImg);
             }
 
             @Override
@@ -172,7 +188,7 @@ public class MainMenScreen extends TBaseScreen {
 
     @SuppressLint("SetTextI18n")
     public void upInfo() {
-        userName.setText(CoreApp.appBean.userBean.userName);
+        userName.setText(CoreApp.appBean.tokenBean.userTable.getUsername());
         userId.setText("ACC ID:" + CoreApp.tokenChatUBean.tokenChatBean.asLongText);
     }
 

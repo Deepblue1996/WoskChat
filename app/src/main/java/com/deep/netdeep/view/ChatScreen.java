@@ -32,6 +32,7 @@ import com.deep.netdeep.net.bean.UserChatBean;
 import com.deep.netdeep.net.bean.UserTable;
 import com.deep.netdeep.socket.WebSocketUtil;
 import com.deep.netdeep.socket.WsListener;
+import com.deep.netdeep.util.ImgPhotoUtil;
 import com.deep.netdeep.util.TouchExt;
 import com.deep.netdeep.util.WebChatUtil;
 import com.github.florent37.viewanimator.ViewAnimator;
@@ -107,7 +108,7 @@ public class ChatScreen extends TBaseScreen implements WsListener {
         sendBt.setOnTouchListener((v, event) -> TouchExt.alpTouch(v, event, () -> {
             ChatMsgBean<String> stringChatMsgBean = new ChatMsgBean<>();
             UserTable userTable = new UserTable();
-            userTable.setUsername(CoreApp.appBean.userBean.userName);
+            userTable.setUsername(CoreApp.appBean.tokenBean.userTable.getUsername());
             stringChatMsgBean.userTableMine = userTable;
             stringChatMsgBean.userTableHere = userChatBean.userTable;
             stringChatMsgBean.type = 0;
@@ -215,12 +216,14 @@ public class ChatScreen extends TBaseScreen implements WsListener {
                 .itemView((universalViewHolder, i) -> {
                     universalViewHolder.vbi(R.id.leftMsg).setVisibility(View.GONE);
                     universalViewHolder.vbi(R.id.rightMsg).setVisibility(View.GONE);
-                    if (chatMsgBeans.get(i).userTableMine.getUsername().equals(CoreApp.appBean.userBean.userName)) {
+                    if (chatMsgBeans.get(i).userTableMine.getUsername().equals(CoreApp.appBean.tokenBean.userTable.getUsername())) {
                         universalViewHolder.vbi(R.id.rightMsg).setVisibility(View.VISIBLE);
                         universalViewHolder.setText(R.id.contentRightText, (String) (chatMsgBeans.get(i).data));
+                        ImgPhotoUtil.getPhoto(CoreApp.appBean.tokenBean.userTable.getHeaderPath(), (ImageView) universalViewHolder.vbi(R.id.rightHead));
                     } else {
                         universalViewHolder.vbi(R.id.leftMsg).setVisibility(View.VISIBLE);
                         universalViewHolder.setText(R.id.contentLeftText, (String) (chatMsgBeans.get(i).data));
+                        ImgPhotoUtil.getPhoto(chatMsgBeans.get(i).userTableHere.getHeaderPath(), (ImageView) universalViewHolder.vbi(R.id.leftHead));
                     }
                 })
                 .itemClick((view, i) -> {
