@@ -34,7 +34,7 @@ public class WebChatUtil {
                 tokenChatUBean.tokenChatBean = tokenChatBean;
                 baseEn.data = tokenChatUBean;
                 WebSocketUtil.get().send(new Gson().toJson(baseEn));
-                if(endListener!=null) {
+                if (endListener != null) {
                     endListener.end(null);
                 }
                 break;
@@ -47,7 +47,7 @@ public class WebChatUtil {
                 tokenChatUBeanBaseEn.msg = "client get service 10000";
                 tokenChatUBeanBaseEn.data = CoreApp.tokenChatUBean;
                 WebSocketUtil.get().send(new Gson().toJson(tokenChatUBeanBaseEn));
-                if(endListener!=null) {
+                if (endListener != null) {
                     endListener.end(null);
                 }
                 break;
@@ -56,18 +56,23 @@ public class WebChatUtil {
 
     /**
      * 收到的信息
+     *
      * @param msg 内容
      */
-    public static void get(String msg, EndListener endListener) {
+    public static void get(String msg, int code, EndListener endListener) {
 
         BaseEn<?> baseEn = new Gson().fromJson(msg, BaseEn.class);
 
+        if(baseEn.code != code) {
+            return;
+        }
         switch (baseEn.code) {
             case 10000:
                 /**
                  * 获取对话id
                  */
-                Type type = new TypeToken<BaseEn<TokenChatUBean>>(){}.getType();
+                Type type = new TypeToken<BaseEn<TokenChatUBean>>() {
+                }.getType();
                 BaseEn<TokenChatUBean> tokenChatUBeanBaseEn = new Gson().fromJson(msg, type);
                 CoreApp.tokenChatUBean = tokenChatUBeanBaseEn.data;
                 CoreApp.tokenChatUBean.tokenChatBean.token = CoreApp.appBean.tokenBean.token;
@@ -82,9 +87,10 @@ public class WebChatUtil {
                 /**
                  * 消息
                  */
-                Type type2 = new TypeToken<BaseEn<ChatMsgBean<?>>>(){}.getType();
+                Type type2 = new TypeToken<BaseEn<ChatMsgBean<?>>>() {
+                }.getType();
                 BaseEn<ChatMsgBean<?>> tokenChatUBeanBaseEn2 = new Gson().fromJson(msg, type2);
-                if(endListener!=null) {
+                if (endListener != null) {
                     endListener.end(tokenChatUBeanBaseEn2);
                 }
                 break;

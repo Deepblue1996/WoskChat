@@ -69,7 +69,7 @@ public class LoginLoadingDialogScreen extends TDialogScreen implements WsListene
     @Override
     public void msg(String text) {
         Lag.i("接收到消息:" + text);
-        WebChatUtil.get(text, new WebChatUtil.EndListener() {
+        WebChatUtil.get(text, 10000, new WebChatUtil.EndListener() {
             @Override
             public void end(Object object) {
                 EventBus.getDefault().post(new LoginSuccessEvent());

@@ -24,7 +24,7 @@
             <com.prohua.roundlayout.RoundAngleFrameLayout
                 android:layout_width="wrap_content"
                 android:layout_marginStart="10dp"
-                app:radius="30dp"
+                app:radius="15dp"
                 android:layout_height="wrap_content">
                 <LinearLayout
                     android:background="#f0f0f0"
@@ -33,7 +33,7 @@
                     <ImageView
                         android:id="@+id/headImg"
                         android:scaleType="centerCrop"
-                        android:src="@mipmap/ic_net_deep"
+                        android:src="@mipmap/ic_logo"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"/>
                 </LinearLayout>

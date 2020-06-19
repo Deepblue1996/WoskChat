@@ -132,7 +132,7 @@
                         android:layout_height="35dp"
                         android:layout_alignParentEnd="true"
                         android:padding="5dp"
-                        android:src="@mipmap/ic_getin" />
+                        android:src="@mipmap/ic_getin_black" />
                 </RelativeLayout>
             </com.prohua.roundlayout.RoundAngleFrameLayout>
 
@@ -149,6 +149,13 @@
                     android:layout_width="28dp"
                     android:layout_height="28dp"
                     android:src="@mipmap/ic_more" />
+
+                <ImageView
+                    android:id="@+id/iconDoTouch"
+                    android:layout_width="28dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_height="28dp"
+                    android:src="@mipmap/ic_icon" />
 
                 <com.prohua.roundlayout.RoundAngleFrameLayout
                     android:id="@+id/sendBt"

@@ -7,9 +7,9 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:background="@color/mBackGround"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/mBackGround"
         android:orientation="vertical">
 
         <com.deep.dpwork.weight.StatusBarPaddingView
@@ -28,75 +28,217 @@
                 android:src="@mipmap/ic_icon_back" />
 
             <TextView
-                android:text="User Info"
-                android:textSize="@dimen/normalFontSize"
-                android:textColor="@color/darkText"
-                android:layout_centerInParent="true"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="User Info"
+                android:textColor="@color/darkText"
+                android:textSize="@dimen/normalFontSize" />
         </RelativeLayout>
     </LinearLayout>
 
     <com.prohua.roundlayout.RoundAngleFrameLayout
         android:layout_width="match_parent"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
         app:radius="10dp">
 
         <RelativeLayout
-            android:id="@+id/memberLin"
+            android:id="@+id/headLin"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:orientation="horizontal"
+            android:layout_height="wrap_content"
+            android:background="@color/mBackGround"
             android:gravity="center_vertical"
-            android:background="@color/mBackGround">
+            android:orientation="horizontal"
+            android:padding="5dp">
 
             <com.prohua.roundlayout.RoundAngleFrameLayout
                 android:layout_width="wrap_content"
-                android:layout_marginEnd="10dp"
-                app:radius="30dp"
+                android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_height="wrap_content">
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="10dp"
+                app:radius="15dp">
+
                 <LinearLayout
-                    android:background="#f0f0f0"
-                    android:padding="15dp"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:background="#f0f0f0">
+
                     <ImageView
-                        android:src="@mipmap/ic_net_deep"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"/>
+                        android:scaleType="centerCrop"
+                        android:id="@+id/headImg"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:src="@mipmap/ic_logo" />
                 </LinearLayout>
             </com.prohua.roundlayout.RoundAngleFrameLayout>
 
             <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:orientation="vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:orientation="vertical">
 
                 <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="Head portrait"
-                    android:id="@+id/userName"
-                    android:textStyle="bold"
                     android:textColor="@color/darkText"
                     android:textSize="20sp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/userACCId"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="100dp"
+                    android:layout_marginTop="5dp"
+                    android:ellipsize="end"
+                    android:lines="1"
+                    android:text="ACC ID: 15434-53438737-83783-873573"
+                    android:textColor="@color/normalText"
+                    android:textSize="@dimen/smallFontSize" />
+
                 <TextView
                     android:id="@+id/userId"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:text="id: 1"
+                    android:layout_marginEnd="100dp"
+                    android:ellipsize="end"
+                    android:lines="1"
+                    android:text="USER ID: 10000"
+                    android:textColor="@color/normalText"
+                    android:textSize="@dimen/smallFontSize" />
+            </LinearLayout>
+
+        </RelativeLayout>
+    </com.prohua.roundlayout.RoundAngleFrameLayout>
+
+    <com.prohua.roundlayout.RoundAngleFrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        app:radius="10dp">
+
+        <RelativeLayout
+            android:id="@+id/nickLin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/mBackGround"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/userName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="100dp"
+                    android:text="Deep"
                     android:lines="1"
                     android:ellipsize="end"
                     android:textColor="@color/darkText"
-                    android:textSize="@dimen/smallFontSize"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:ellipsize="end"
+                    android:lines="1"
+                    android:text="NickName"
+                    android:textColor="@color/normalText"
+                    android:textSize="@dimen/smallFontSize" />
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/nickEt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:padding="5dp">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@mipmap/ic_getin_black" />
+            </LinearLayout>
+        </RelativeLayout>
+    </com.prohua.roundlayout.RoundAngleFrameLayout>
+
+    <com.prohua.roundlayout.RoundAngleFrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        app:radius="10dp">
+
+        <RelativeLayout
+            android:id="@+id/contentLin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/mBackGround"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/contentName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="100dp"
+                    android:text="You have new world."
+                    android:lines="1"
+                    android:ellipsize="end"
+                    android:textColor="@color/darkText"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:ellipsize="end"
+                    android:lines="1"
+                    android:text="Signature"
+                    android:textColor="@color/normalText"
+                    android:textSize="@dimen/smallFontSize" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/contentEt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:padding="5dp">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@mipmap/ic_getin_black" />
+            </LinearLayout>
         </RelativeLayout>
     </com.prohua.roundlayout.RoundAngleFrameLayout>
 

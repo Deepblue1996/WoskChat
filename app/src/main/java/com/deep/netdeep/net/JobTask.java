@@ -3,6 +3,7 @@ package com.deep.netdeep.net;
 import com.deep.netdeep.net.bean.BaseEn;
 import com.deep.netdeep.net.bean.TokenBean;
 import com.deep.netdeep.net.bean.UserChatBean;
+import com.deep.netdeep.net.bean.UserTable;
 
 import java.util.List;
 
@@ -70,7 +71,6 @@ public interface JobTask {
     @POST("/tcpservice_war/fileUploadHeadPortrait")
     Observable<BaseEn<String>> fileUploadHeadPortrait(@Header("token") String token, @Part MultipartBody.Part files);
 
-
     /**
      * 获取图片
      *
@@ -79,5 +79,14 @@ public interface JobTask {
     @FormUrlEncoded
     @POST("/tcpservice_war/rePhoto")
     Observable<BaseEn<String>> rePhoto(@Field("name") String name);
+
+    /**
+     * 修改昵称签名
+     *
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("/tcpservice_war/editInfo")
+    Observable<BaseEn<UserTable>> editInfo(@Field("info") String info);
 
 }

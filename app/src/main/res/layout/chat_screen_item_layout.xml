@@ -20,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            app:radius="20dp">
+            app:radius="10dp">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -28,6 +28,7 @@
                 android:background="#f0f0f0">
 
                 <ImageView
+                    android:scaleType="centerCrop"
                     android:id="@+id/leftHead"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
@@ -127,7 +128,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="10dp"
-            app:radius="20dp">
+            app:radius="10dp">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -135,6 +136,7 @@
                 android:background="#f0f0f0">
 
                 <ImageView
+                    android:scaleType="centerCrop"
                     android:id="@+id/rightHead"
                     android:layout_width="40dp"
                     android:layout_height="40dp"

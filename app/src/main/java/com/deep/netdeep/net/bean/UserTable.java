@@ -6,11 +6,30 @@ public class UserTable implements Serializable {
 
     private int id;
 
+    /**
+     * 用户名
+     */
     private String username;
 
+    /**
+     * 密码
+     */
     private String password;
 
+    /**
+     * 头像路径
+     */
     private String headerPath;
+
+    /**
+     * 昵称
+     */
+    private String nickname;
+
+    /**
+     * 签名
+     */
+    private String content;
 
     public int getId() {
         return id;
@@ -42,5 +61,21 @@ public class UserTable implements Serializable {
 
     public void setHeaderPath(String headerPath) {
         this.headerPath = headerPath;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 }

@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.deep.dpwork.adapter.DpAdapter;
 import com.deep.dpwork.annotation.DpLayout;
@@ -20,6 +21,7 @@ import com.deep.dpwork.util.DBUtil;
 import com.deep.dpwork.util.DTimeUtil;
 import com.deep.dpwork.util.DisplayUtil;
 import com.deep.dpwork.util.InputManagerUtil;
+import com.deep.dpwork.util.Lag;
 import com.deep.dpwork.util.SoftListenerUtil;
 import com.deep.dpwork.weight.DpRecyclerView;
 import com.deep.netdeep.R;
@@ -29,7 +31,6 @@ import com.deep.netdeep.bean.UserChatMsgBean;
 import com.deep.netdeep.core.CoreApp;
 import com.deep.netdeep.net.bean.BaseEn;
 import com.deep.netdeep.net.bean.UserChatBean;
-import com.deep.netdeep.net.bean.UserTable;
 import com.deep.netdeep.socket.WebSocketUtil;
 import com.deep.netdeep.socket.WsListener;
 import com.deep.netdeep.util.ImgPhotoUtil;
@@ -84,6 +85,8 @@ public class ChatScreen extends TBaseScreen implements WsListener {
 
     private UserChatBean userChatBean;
 
+    private LinearLayoutManager linearLayoutManager;
+
     private ViewTreeObserver.OnGlobalLayoutListener onGlobalLayoutListener;
 
     public void setUserChatBean(UserChatBean userChatBean) {
@@ -103,20 +106,21 @@ public class ChatScreen extends TBaseScreen implements WsListener {
 
         initData();
 
-        userName.setText(userChatBean.userTable.getUsername());
+        userName.setText(userChatBean.userTable.getNickname() == null ? userChatBean.userTable.getUsername() : userChatBean.userTable.getNickname());
         backTouch.setOnTouchListener((v, event) -> TouchExt.alpTouch(v, event, this::closeEx));
         sendBt.setOnTouchListener((v, event) -> TouchExt.alpTouch(v, event, () -> {
             ChatMsgBean<String> stringChatMsgBean = new ChatMsgBean<>();
-            UserTable userTable = new UserTable();
-            userTable.setUsername(CoreApp.appBean.tokenBean.userTable.getUsername());
-            stringChatMsgBean.userTableMine = userTable;
+            stringChatMsgBean.userTableMine = CoreApp.appBean.tokenBean.userTable;
             stringChatMsgBean.userTableHere = userChatBean.userTable;
             stringChatMsgBean.type = 0;
+            stringChatMsgBean.time = System.currentTimeMillis();
             stringChatMsgBean.data = contentEdit.getText().toString();
             chatMsgBeans.add(0, stringChatMsgBean);
-            dpAdapter.notifyDataSetChanged();
+            dpAdapter.notifyItemInserted(0);
+            //dpAdapter.notifyDataSetChanged();
             contentEdit.setText("");
-            recyclerView.scrollToPosition(0);
+
+            recyclerView.post(() -> recyclerView.scrollToPosition(0));
 
             BaseEn<ChatMsgBean<String>> baseEn = new BaseEn<>();
             baseEn.code = 30000;
@@ -124,6 +128,7 @@ public class ChatScreen extends TBaseScreen implements WsListener {
             baseEn.data = stringChatMsgBean;
             WebSocketUtil.get().send(new Gson().toJson(baseEn));
 
+            chatMsgBeans.get(0).isRead = true;
             saveData();
         }));
 
@@ -162,9 +167,10 @@ public class ChatScreen extends TBaseScreen implements WsListener {
                     layoutParams.bottomMargin = i;
                 }
                 if (isShowSoft) {
-                    recyclerView.scrollToPosition(0);
+                    centerBottom.setLayoutParams(layoutParams);
+                    centerBottom.post(() -> recyclerView.scrollToPosition(0));
+                    isShowSoft = false;
                 }
-                isShowSoft = false;
             } else {
                 if (moreLin.getVisibility() == View.VISIBLE) {
                     moreLin.setVisibility(View.GONE);
@@ -176,11 +182,11 @@ public class ChatScreen extends TBaseScreen implements WsListener {
                     layoutParams.bottomMargin = i;
                 }
                 if (!isShowSoft) {
-                    recyclerView.scrollToPosition(0);
+                    centerBottom.setLayoutParams(layoutParams);
+                    centerBottom.post(() -> recyclerView.scrollToPosition(0));
                     isShowSoft = true;
                 }
             }
-            centerBottom.setLayoutParams(layoutParams);
 
         });
 
@@ -197,9 +203,11 @@ public class ChatScreen extends TBaseScreen implements WsListener {
                                 moreLin.setVisibility(View.VISIBLE);
                                 ViewAnimator.animate(moreDoTouch).rotation(0, 90f).duration(300).start();
                             });
+                            centerBottom.post(() -> recyclerView.scrollToPosition(0));
                         } else {
                             moreLin.setVisibility(View.VISIBLE);
                             ViewAnimator.animate(moreDoTouch).rotation(0, 90f).duration(300).start();
+                            centerBottom.post(() -> recyclerView.scrollToPosition(0));
                         }
                     }
                 }));
@@ -208,9 +216,7 @@ public class ChatScreen extends TBaseScreen implements WsListener {
 
         refreshLayout.setEnableLoadMore(false);
 
-        refreshLayout.setOnRefreshListener(refreshLayout -> {
-            refreshLayout.finishRefresh(0);
-        });
+        refreshLayout.setOnRefreshListener(refreshLayout -> refreshLayout.finishRefresh(0));
 
         dpAdapter = DpAdapter.newLine(getContext(), chatMsgBeans, R.layout.chat_screen_item_layout)
                 .itemView((universalViewHolder, i) -> {
@@ -219,21 +225,37 @@ public class ChatScreen extends TBaseScreen implements WsListener {
                     if (chatMsgBeans.get(i).userTableMine.getUsername().equals(CoreApp.appBean.tokenBean.userTable.getUsername())) {
                         universalViewHolder.vbi(R.id.rightMsg).setVisibility(View.VISIBLE);
                         universalViewHolder.setText(R.id.contentRightText, (String) (chatMsgBeans.get(i).data));
-                        ImgPhotoUtil.getPhoto(CoreApp.appBean.tokenBean.userTable.getHeaderPath(), (ImageView) universalViewHolder.vbi(R.id.rightHead));
+
+                        ImageView vs = (ImageView) universalViewHolder.vbi(R.id.rightHead);
+                        if (!CoreApp.appBean.tokenBean.userTable.getHeaderPath().equals(vs.getTag(R.id.leftHead))) {
+                            vs.setTag(R.id.rightHead, CoreApp.appBean.tokenBean.userTable.getHeaderPath());
+                            ImgPhotoUtil.getPhoto(_dpActivity, CoreApp.appBean.tokenBean.userTable.getHeaderPath(), (ImageView) universalViewHolder.vbi(R.id.rightHead));
+                        }
+
                     } else {
                         universalViewHolder.vbi(R.id.leftMsg).setVisibility(View.VISIBLE);
                         universalViewHolder.setText(R.id.contentLeftText, (String) (chatMsgBeans.get(i).data));
-                        ImgPhotoUtil.getPhoto(chatMsgBeans.get(i).userTableHere.getHeaderPath(), (ImageView) universalViewHolder.vbi(R.id.leftHead));
+
+                        ImageView vs = (ImageView) universalViewHolder.vbi(R.id.leftHead);
+                        if (!chatMsgBeans.get(i).userTableMine.getHeaderPath().equals(vs.getTag(R.id.leftHead))) {
+                            vs.setTag(R.id.leftHead, chatMsgBeans.get(i).userTableMine.getHeaderPath());
+                            ImgPhotoUtil.getPhoto(_dpActivity, chatMsgBeans.get(i).userTableMine.getHeaderPath(), (ImageView) universalViewHolder.vbi(R.id.leftHead));
+                        }
                     }
                 })
                 .itemClick((view, i) -> {
                 });
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(),
-                LinearLayoutManager.VERTICAL, true));
-        recyclerView.setAdapter(dpAdapter);
+        linearLayoutManager = new LinearLayoutManager(getActivity(),
+                LinearLayoutManager.VERTICAL, true);
+        // 不让子布局随父布局滚动
+        linearLayoutManager.setStackFromEnd(true);
 
-        recyclerView.scrollToPosition(0);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setAdapter(dpAdapter);
+        ((SimpleItemAnimator) Objects.requireNonNull(recyclerView.getItemAnimator())).setSupportsChangeAnimations(false);
+
+        recyclerView.post(() -> recyclerView.scrollToPosition(0));
 
         WebSocketUtil.get().addListener(this);
     }
@@ -244,6 +266,9 @@ public class ChatScreen extends TBaseScreen implements WsListener {
 
         for (int i = 0; i < CoreApp.appBean.userChatMsgBeanList.size(); i++) {
             if (CoreApp.appBean.userChatMsgBeanList.get(i).userChatBean.userTable.getId() == userChatBean.userTable.getId()) {
+                for (int j = 0; j < CoreApp.appBean.userChatMsgBeanList.get(i).chatMsgBeans.size(); j++) {
+                    CoreApp.appBean.userChatMsgBeanList.get(i).chatMsgBeans.get(j).isRead = true;
+                }
                 chatMsgBeans.addAll(CoreApp.appBean.userChatMsgBeanList.get(i).chatMsgBeans);
                 haveChat = true;
                 break;
@@ -263,7 +288,8 @@ public class ChatScreen extends TBaseScreen implements WsListener {
 
         for (int i = 0; i < CoreApp.appBean.userChatMsgBeanList.size(); i++) {
             if (CoreApp.appBean.userChatMsgBeanList.get(i).userChatBean.userTable.getId() == userChatBean.userTable.getId()) {
-                CoreApp.appBean.userChatMsgBeanList.get(i).chatMsgBeans = chatMsgBeans;
+                CoreApp.appBean.userChatMsgBeanList.get(i).chatMsgBeans.clear();
+                CoreApp.appBean.userChatMsgBeanList.get(i).chatMsgBeans.addAll(chatMsgBeans);
                 DBUtil.save(CoreApp.appBean);
                 break;
             }
@@ -285,12 +311,49 @@ public class ChatScreen extends TBaseScreen implements WsListener {
     @SuppressWarnings("all")
     @Override
     public void msg(String text) {
-        WebChatUtil.get(text, object -> {
+        WebChatUtil.get(text, 30000, object -> {
             BaseEn<ChatMsgBean<?>> stringChatMsgBean = (BaseEn<ChatMsgBean<?>>) object;
-            chatMsgBeans.add(0, stringChatMsgBean.data);
-            dpAdapter.notifyDataSetChanged();
-            recyclerView.scrollToPosition(0);
-            saveData();
+
+            // 先判断是否存在于数据
+            for (int i = 0; i < CoreApp.appBean.userChatMsgBeanList.size(); i++) {
+                // 判断是否同一个人
+                if (userChatBean.userTable.getId() == CoreApp.appBean.userChatMsgBeanList.get(i).userChatBean.userTable.getId()) {
+                    // 判断最后一条是否一样
+                    if (CoreApp.appBean.userChatMsgBeanList.get(i).chatMsgBeans.size() == 0
+                            || CoreApp.appBean.userChatMsgBeanList.get(i).chatMsgBeans.get(0).time != stringChatMsgBean.data.time) {
+                        stringChatMsgBean.data.isRead = true;
+                        CoreApp.appBean.userChatMsgBeanList.get(i).chatMsgBeans.add(0, stringChatMsgBean.data);
+                        DBUtil.save(CoreApp.appBean);
+                    }
+                    break;
+                }
+            }
+
+            // 是否是当前会话
+            if (stringChatMsgBean.data.userTableMine.getId() == userChatBean.userTable.getId()) {
+                Lag.i("子会话同步消息");
+                chatMsgBeans.clear();
+                for (int i = 0; i < CoreApp.appBean.userChatMsgBeanList.size(); i++) {
+                    // 判断是否同一个人
+                    if (userChatBean.userTable.getId() == CoreApp.appBean.userChatMsgBeanList.get(i).userChatBean.userTable.getId()) {
+                        for (int j = 0; j < CoreApp.appBean.userChatMsgBeanList.get(i).chatMsgBeans.size(); j++) {
+                            CoreApp.appBean.userChatMsgBeanList.get(i).chatMsgBeans.get(j).isRead = true;
+                        }
+                        DBUtil.save(CoreApp.appBean);
+                        // 判断最后一条是否一样
+                        chatMsgBeans.addAll(CoreApp.appBean.userChatMsgBeanList.get(i).chatMsgBeans);
+
+                        dpAdapter.notifyItemInserted(0);
+                        //dpAdapter.notifyDataSetChanged();
+                        recyclerView.post(() -> {
+                            recyclerView.scrollToPosition(0);
+                            linearLayoutManager.scrollToPositionWithOffset(0, 0);
+                        });
+                        break;
+                    }
+
+                }
+            }
         });
     }
 

@@ -12,11 +12,13 @@ import com.deep.dpwork.annotation.DpMainScreen;
 import com.deep.dpwork.annotation.DpStatus;
 import com.deep.dpwork.dialog.DialogScreen;
 import com.deep.dpwork.dialog.DpDialogScreen;
+import com.deep.dpwork.util.DBUtil;
 import com.deep.dpwork.util.Lag;
 import com.deep.dpwork.util.ToastUtil;
 import com.deep.dpwork.weight.DpTabManager;
 import com.deep.netdeep.R;
 import com.deep.netdeep.base.TBaseScreen;
+import com.deep.netdeep.bean.ChatMsgBean;
 import com.deep.netdeep.core.CoreApp;
 import com.deep.netdeep.event.LoginSuccessEvent;
 import com.deep.netdeep.event.MainSelectTabEvent;
@@ -185,16 +187,13 @@ public class MainScreen extends TBaseScreen implements WsListener {
 
     @Override
     public void hideScreen() {
-        Lag.i("移除监听");
-        WebSocketUtil.get().removeListener(this);
     }
 
     @SuppressLint("SetTextI18n")
     @Override
     public void showScreen() {
         Lag.i("添加监听");
-        WebSocketUtil.get().addListener(this);
-        if(WebSocketUtil.get().isConnected()) {
+        if (WebSocketUtil.get().isConnected()) {
             messageTv.setText("online");
         } else {
             messageTv.setText("offline");
@@ -220,10 +219,32 @@ public class MainScreen extends TBaseScreen implements WsListener {
         WebChatUtil.put(10000, null);
     }
 
+    @SuppressWarnings("all")
     @Override
     public void msg(String text) {
         Lag.i("接收到消息:" + text);
-        WebChatUtil.get(text, null);
+        WebChatUtil.get(text, 10000, null);
+        WebChatUtil.get(text, 30000, new WebChatUtil.EndListener() {
+            @Override
+            public void end(Object object) {
+                BaseEn<ChatMsgBean<?>> stringChatMsgBean = (BaseEn<ChatMsgBean<?>>) object;
+                for (int i = 0; i < CoreApp.appBean.userChatMsgBeanList.size(); i++) {
+                    // 判断是否同一个人
+                    if (stringChatMsgBean.data.userTableMine.getId() == CoreApp.appBean.userChatMsgBeanList.get(i).userChatBean.userTable.getId()) {
+                        // 判断最后一条是否一样
+                        if (CoreApp.appBean.userChatMsgBeanList.get(i).chatMsgBeans.size() > 0 && CoreApp.appBean.userChatMsgBeanList.get(i).chatMsgBeans.get(0).time == stringChatMsgBean.data.time) {
+                            Lag.i("主会话增加消息，消息已记录");
+                            break;
+                        } else {
+                            CoreApp.appBean.userChatMsgBeanList.get(i).chatMsgBeans.add(0, stringChatMsgBean.data);
+                            DBUtil.save(CoreApp.appBean);
+                            Lag.i("主会话增加消息");
+                            break;
+                        }
+                    }
+                }
+            }
+        });
         mainMenScreen.upInfo();
         mainChatScreen.getOnlineUser();
     }
