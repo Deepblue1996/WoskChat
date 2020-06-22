@@ -117,7 +117,6 @@ public class ChatScreen extends TBaseScreen implements WsListener {
             stringChatMsgBean.data = contentEdit.getText().toString();
             chatMsgBeans.add(0, stringChatMsgBean);
             dpAdapter.notifyItemInserted(0);
-            //dpAdapter.notifyDataSetChanged();
             contentEdit.setText("");
 
             recyclerView.post(() -> recyclerView.scrollToPosition(0));

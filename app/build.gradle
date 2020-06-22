@@ -31,4 +31,5 @@ dependencies {
     implementation 'com.deep:DpWorkAX:1.5.2'
     implementation 'com.jakewharton:butterknife:10.2.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
+    implementation 'com.github.mcxtzhang:SwipeDelMenuLayout:V1.3.0'
 }

@@ -18,6 +18,7 @@ import com.deep.dpwork.weight.DpRecyclerView;
 import com.deep.netdeep.R;
 import com.deep.netdeep.base.TBaseScreen;
 import com.deep.netdeep.bean.ChatMsgBean;
+import com.deep.netdeep.bean.UserChatMsgBean;
 import com.deep.netdeep.core.CoreApp;
 import com.deep.netdeep.event.UpdateInfoEvent;
 import com.deep.netdeep.net.bean.BaseEn;
@@ -45,6 +46,8 @@ public class MainChatScreen extends TBaseScreen implements WsListener {
 
     @BindView(R.id.offlineLin)
     RelativeLayout offlineLin;
+    @BindView(R.id.nullLineLin)
+    RelativeLayout nullLineLin;
 
     @BindView(R.id.refreshLayout)
     RefreshLayout refreshLayout;
@@ -52,7 +55,8 @@ public class MainChatScreen extends TBaseScreen implements WsListener {
     @BindView(R.id.recyclerView)
     DpRecyclerView recyclerView;
 
-    private List<UserChatBean> userChatBeans = new ArrayList<>();
+    private List<UserChatMsgBean> userChatBeans = new ArrayList<>();
+    private List<UserChatBean> userChatBeanOnlines = new ArrayList<>();
 
     private DpAdapter dpAdapter;
 
@@ -77,14 +81,24 @@ public class MainChatScreen extends TBaseScreen implements WsListener {
 
         offlineLin.setVisibility(View.GONE);
 
+        userChatBeans.clear();
+        userChatBeans.addAll(CoreApp.appBean.userChatMsgBeanList);
+        dpAdapter.notifyDataSetChanged();
+        refreshLayout.finishRefresh(0);
+
+        if (CoreApp.appBean.userChatMsgBeanList.size() == 0) {
+            nullLineLin.setVisibility(View.VISIBLE);
+        } else {
+            nullLineLin.setVisibility(View.GONE);
+        }
         Dove.flyLifeOnlyNet(CoreApp.jobTask.userList(CoreApp.appBean.tokenBean.token),
                 new Dover<BaseEn<List<UserChatBean>>>() {
                     @SuppressLint("SetTextI18n")
                     @Override
                     public void don(Disposable d, BaseEn<List<UserChatBean>> loginBeanBaseEn) {
                         Lag.i(loginBeanBaseEn.msg);
-                        userChatBeans.clear();
-                        userChatBeans.addAll(loginBeanBaseEn.data);
+                        userChatBeanOnlines.clear();
+                        userChatBeanOnlines.addAll(loginBeanBaseEn.data);
                         dpAdapter.notifyDataSetChanged();
                         refreshLayout.finishRefresh(0);
                     }
@@ -103,18 +117,49 @@ public class MainChatScreen extends TBaseScreen implements WsListener {
 
         refreshLayout.setOnRefreshListener(refreshLayout -> getOnlineUser());
 
+        userChatBeans.addAll(CoreApp.appBean.userChatMsgBeanList);
+
         dpAdapter = DpAdapter.newLine(getContext(), userChatBeans, R.layout.main_chat_item_layout)
                 .itemView((universalViewHolder, i) -> {
-                    universalViewHolder.setText(R.id.userName, userChatBeans.get(i).userTable.getNickname() == null ?
-                            userChatBeans.get(i).userTable.getUsername() : userChatBeans.get(i).userTable.getNickname());
+                    universalViewHolder.setText(R.id.userName, userChatBeans.get(i).userChatBean.userTable.getNickname() == null ?
+                            userChatBeans.get(i).userChatBean.userTable.getUsername() : userChatBeans.get(i).userChatBean.userTable.getNickname());
 
-                    if(CoreApp.appBean.userChatMsgBeanList.size() == 0) {
-                        universalViewHolder.setText(R.id.userContent, userChatBeans.get(i).userTable.getContent());
+                    if (CoreApp.appBean.userChatMsgBeanList.size() == 0) {
+                        universalViewHolder.setText(R.id.userContent, userChatBeans.get(i).userChatBean.userTable.getContent());
                         universalViewHolder.vbi(R.id.weiDuLin).setVisibility(View.GONE);
                     }
 
+                    boolean isOnline = false;
+                    for (int j = 0; j < userChatBeanOnlines.size(); j++) {
+                        if(userChatBeanOnlines.get(j).userTable.getId() == userChatBeans.get(i).userChatBean.userTable.getId()) {
+                            isOnline = true;
+                            break;
+                        }
+                    }
+                    if(isOnline) {
+                        universalViewHolder.setImgRes(R.id.icLineIg, R.mipmap.ic_mem_online);
+                    } else {
+                        universalViewHolder.setImgRes(R.id.icLineIg, R.mipmap.ic_mem_offline);
+                    }
+
+                    universalViewHolder.vbi(R.id.btnTop).setOnClickListener(v -> {
+                        userChatBeans.remove(i);
+                        dpAdapter.notifyItemRemoved(i);
+                        dpAdapter.notifyDataSetChanged();
+                        if (userChatBeans.size() == 0) {
+                            nullLineLin.setVisibility(View.VISIBLE);
+                        }
+                    });
+
+
+                    universalViewHolder.vbi(R.id.contentBg).setOnClickListener(v -> {
+                        ChatScreen chatScreen = ChatScreen.newInstance();
+                        chatScreen.setUserChatBean(userChatBeans.get(i).userChatBean);
+                        baseScreen.open(chatScreen);
+                    });
+
                     for (int j = 0; j < CoreApp.appBean.userChatMsgBeanList.size(); j++) {
-                        if (CoreApp.appBean.userChatMsgBeanList.get(j).userChatBean.userTable.getId() == userChatBeans.get(i).userTable.getId()) {
+                        if (CoreApp.appBean.userChatMsgBeanList.get(j).userChatBean.userTable.getId() == userChatBeans.get(i).userChatBean.userTable.getId()) {
                             if (CoreApp.appBean.userChatMsgBeanList.get(j).chatMsgBeans.size() > 0) {
                                 ChatMsgBean chatMsgBean = CoreApp.appBean.userChatMsgBeanList.get(j).chatMsgBeans.get(0);
                                 if (chatMsgBean.type == 0) {
@@ -134,27 +179,28 @@ public class MainChatScreen extends TBaseScreen implements WsListener {
                                 }
                             } else {
                                 // 没聊天消息显示签名
-                                universalViewHolder.setText(R.id.userContent, userChatBeans.get(i).userTable.getContent());
+                                universalViewHolder.setText(R.id.userContent, userChatBeans.get(i).userChatBean.userTable.getContent());
                                 universalViewHolder.vbi(R.id.weiDuLin).setVisibility(View.GONE);
                             }
                         }
                     }
 
                     ImageView vs = (ImageView) universalViewHolder.vbi(R.id.headImg);
-                    if (!userChatBeans.get(i).userTable.getHeaderPath().equals(vs.getTag(R.id.headImg))) {
-                        vs.setTag(R.id.headImg, userChatBeans.get(i).userTable.getHeaderPath());
-                        ImgPhotoUtil.getPhoto(_dpActivity, userChatBeans.get(i).userTable.getHeaderPath(), (ImageView) universalViewHolder.vbi(R.id.headImg));
+                    if (!userChatBeans.get(i).userChatBean.userTable.getHeaderPath().equals(vs.getTag(R.id.headImg))) {
+                        vs.setTag(R.id.headImg, userChatBeans.get(i).userChatBean.userTable.getHeaderPath());
+                        ImgPhotoUtil.getPhoto(_dpActivity, userChatBeans.get(i).userChatBean.userTable.getHeaderPath(), (ImageView) universalViewHolder.vbi(R.id.headImg));
                     }
-                })
-                .itemClick((view, i) -> {
-                    ChatScreen chatScreen = ChatScreen.newInstance();
-                    chatScreen.setUserChatBean(userChatBeans.get(i));
-                    baseScreen.open(chatScreen);
+
                 });
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(dpAdapter);
 
+        if (CoreApp.appBean.userChatMsgBeanList.size() == 0) {
+            nullLineLin.setVisibility(View.VISIBLE);
+        } else {
+            nullLineLin.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -212,8 +258,8 @@ public class MainChatScreen extends TBaseScreen implements WsListener {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(UpdateInfoEvent event) {
         for (int i = 0; i < userChatBeans.size(); i++) {
-            if (userChatBeans.get(i).userTable.getId() == CoreApp.appBean.tokenBean.userTable.getId()) {
-                userChatBeans.get(i).userTable = CoreApp.appBean.tokenBean.userTable;
+            if (userChatBeans.get(i).userChatBean.userTable.getId() == CoreApp.appBean.tokenBean.userTable.getId()) {
+                userChatBeans.get(i).userChatBean.userTable = CoreApp.appBean.tokenBean.userTable;
             }
         }
         dpAdapter.notifyDataSetChanged();
