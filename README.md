@@ -1,10 +1,10 @@
-![Image text](https://raw.githubusercontent.com/Deepblue1996/WoskChat/master/img/see.png)
+![Image text](https://raw.githubusercontent.com/Deepblue1996/WoskChat/master/app/src/main/res/mipmap-xhdpi/ic_logo.png)
 
 <a href="http://developer.android.com/index.html"><img src="https://img.shields.io/badge/platform-android-green.svg"></a>
 [![](https://jitpack.io/v/Deepblue1996/Bun.svg)](https://jitpack.io/#Deepblue1996/Bun)
 <a href="https://www.apache.org/licenses/LICENSE-2.0"><img src="https://img.shields.io/badge/license-apache-green.svg"></a>
 
-Free ad-free wallpaper software based on DpWorkAX framework.
+An instant chat App developed based on THE DpWorkAX framework.
 
 <img src="https://raw.githubusercontent.com/Deepblue1996/WoskChat/master/img/1.jpg" width="300"/> <img src="https://raw.githubusercontent.com/Deepblue1996/WoskChat/master/img/2.jpg" width="300"/>
 
