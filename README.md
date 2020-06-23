@@ -1,4 +1,4 @@
-![Image text](https://raw.githubusercontent.com/Deepblue1996/WoskChat/master/app/src/main/res/mipmap-xhdpi/ic_logo.png)
+<img src="https://raw.githubusercontent.com/Deepblue1996/WoskChat/master/app/src/main/res/mipmap-xhdpi/ic_logo.png" width="100"/>
 
 <a href="http://developer.android.com/index.html"><img src="https://img.shields.io/badge/platform-android-green.svg"></a>
 [![](https://jitpack.io/v/Deepblue1996/Bun.svg)](https://jitpack.io/#Deepblue1996/Bun)
