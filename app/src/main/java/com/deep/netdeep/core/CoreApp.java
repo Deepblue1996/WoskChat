@@ -9,7 +9,6 @@ import com.deep.dpwork.annotation.net.DoveInit;
 import com.deep.dpwork.lang.LanguageType;
 import com.deep.netdeep.bean.AppBean;
 import com.deep.netdeep.net.JobTask;
-import com.deep.netdeep.net.bean.TokenChatUBean;
 
 /**
  * Class - 主类
@@ -20,9 +19,6 @@ import com.deep.netdeep.net.bean.TokenChatUBean;
 @DpBugly("0fbc31ba0d")
 @DpLang(LanguageType.LANGUAGE_FOLLOW_SYSTEM)
 public class CoreApp extends DpWorkApplication {
-
-    // 全局对话id
-    public static TokenChatUBean tokenChatUBean = new TokenChatUBean();
 
     // 数据保存
     @DpDataBase(AppBean.class)

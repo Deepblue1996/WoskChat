@@ -7,7 +7,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import com.deep.dpwork.annotation.DpLayout;
@@ -52,8 +51,6 @@ public class UserInfoScreen extends TBaseScreen {
     LinearLayout nickEt;
     @BindView(R.id.contentEt)
     LinearLayout contentEt;
-    @BindView(R.id.userACCId)
-    TextView userACCId;
     @BindView(R.id.userId)
     TextView userId;
     @BindView(R.id.userName)
@@ -65,7 +62,7 @@ public class UserInfoScreen extends TBaseScreen {
     @Override
     public void init() {
 
-        if (CoreApp.appBean.tokenBean.token == null || CoreApp.tokenChatUBean.tokenChatBean == null) {
+        if (CoreApp.appBean.tokenBean.token == null) {
             userName.setText("Click login");
         } else {
             try {
@@ -225,7 +222,6 @@ public class UserInfoScreen extends TBaseScreen {
 
     @SuppressLint("SetTextI18n")
     public void upInfo() {
-        userACCId.setText("ACC ID:" + CoreApp.tokenChatUBean.tokenChatBean.asLongText);
         userId.setText("USER ID:" + CoreApp.appBean.tokenBean.userTable.getId() + "(" + CoreApp.appBean.tokenBean.userTable.getUsername() + ")");
         userName.setText(CoreApp.appBean.tokenBean.userTable.getNickname());
         contentName.setText(CoreApp.appBean.tokenBean.userTable.getContent());

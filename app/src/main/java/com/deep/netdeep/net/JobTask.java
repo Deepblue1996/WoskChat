@@ -2,7 +2,6 @@ package com.deep.netdeep.net;
 
 import com.deep.netdeep.net.bean.BaseEn;
 import com.deep.netdeep.net.bean.TokenBean;
-import com.deep.netdeep.net.bean.UserChatBean;
 import com.deep.netdeep.net.bean.UserTable;
 
 import java.util.List;
@@ -58,7 +57,7 @@ public interface JobTask {
      */
     @FormUrlEncoded
     @POST("/tcpservice_war/userList")
-    Observable<BaseEn<List<UserChatBean>>> userList(@Field("token") String token);
+    Observable<BaseEn<List<UserTable>>> userList(@Field("token") String token);
 
     /**
      * 上传头像
@@ -88,5 +87,14 @@ public interface JobTask {
     @FormUrlEncoded
     @POST("/tcpservice_war/editInfo")
     Observable<BaseEn<UserTable>> editInfo(@Field("info") String info);
+
+    /**
+     * 搜索用户
+     *
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("/tcpservice_war/findUser")
+    Observable<BaseEn<List<UserTable>>> findUser(@Field("username") String username);
 
 }

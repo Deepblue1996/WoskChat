@@ -22,7 +22,7 @@ import com.deep.netdeep.bean.UserChatMsgBean;
 import com.deep.netdeep.core.CoreApp;
 import com.deep.netdeep.event.UpdateInfoEvent;
 import com.deep.netdeep.net.bean.BaseEn;
-import com.deep.netdeep.net.bean.UserChatBean;
+import com.deep.netdeep.net.bean.UserTable;
 import com.deep.netdeep.socket.WebSocketUtil;
 import com.deep.netdeep.socket.WsListener;
 import com.deep.netdeep.util.ImgPhotoUtil;
@@ -56,7 +56,7 @@ public class MainChatScreen extends TBaseScreen implements WsListener {
     DpRecyclerView recyclerView;
 
     private List<UserChatMsgBean> userChatBeans = new ArrayList<>();
-    private List<UserChatBean> userChatBeanOnlines = new ArrayList<>();
+    private List<UserTable> userTableOnLines = new ArrayList<>();
 
     private DpAdapter dpAdapter;
 
@@ -92,13 +92,13 @@ public class MainChatScreen extends TBaseScreen implements WsListener {
             nullLineLin.setVisibility(View.GONE);
         }
         Dove.flyLifeOnlyNet(CoreApp.jobTask.userList(CoreApp.appBean.tokenBean.token),
-                new Dover<BaseEn<List<UserChatBean>>>() {
+                new Dover<BaseEn<List<UserTable>>>() {
                     @SuppressLint("SetTextI18n")
                     @Override
-                    public void don(Disposable d, BaseEn<List<UserChatBean>> loginBeanBaseEn) {
+                    public void don(Disposable d, BaseEn<List<UserTable>> loginBeanBaseEn) {
                         Lag.i(loginBeanBaseEn.msg);
-                        userChatBeanOnlines.clear();
-                        userChatBeanOnlines.addAll(loginBeanBaseEn.data);
+                        userTableOnLines.clear();
+                        userTableOnLines.addAll(loginBeanBaseEn.data);
                         dpAdapter.notifyDataSetChanged();
                         refreshLayout.finishRefresh(0);
                     }
@@ -106,6 +106,8 @@ public class MainChatScreen extends TBaseScreen implements WsListener {
                     @Override
                     public void die(Disposable d, Throwable throwable) {
                         ToastUtil.showError("NetWork is Error");
+                        nullLineLin.setVisibility(View.GONE);
+                        offlineLin.setVisibility(View.VISIBLE);
                     }
                 });
     }
@@ -121,17 +123,17 @@ public class MainChatScreen extends TBaseScreen implements WsListener {
 
         dpAdapter = DpAdapter.newLine(getContext(), userChatBeans, R.layout.main_chat_item_layout)
                 .itemView((universalViewHolder, i) -> {
-                    universalViewHolder.setText(R.id.userName, userChatBeans.get(i).userChatBean.userTable.getNickname() == null ?
-                            userChatBeans.get(i).userChatBean.userTable.getUsername() : userChatBeans.get(i).userChatBean.userTable.getNickname());
+                    universalViewHolder.setText(R.id.userName, userChatBeans.get(i).userTable.getNickname() == null ?
+                            userChatBeans.get(i).userTable.getUsername() : userChatBeans.get(i).userTable.getNickname());
 
                     if (CoreApp.appBean.userChatMsgBeanList.size() == 0) {
-                        universalViewHolder.setText(R.id.userContent, userChatBeans.get(i).userChatBean.userTable.getContent());
+                        universalViewHolder.setText(R.id.userContent, userChatBeans.get(i).userTable.getContent());
                         universalViewHolder.vbi(R.id.weiDuLin).setVisibility(View.GONE);
                     }
 
                     boolean isOnline = false;
-                    for (int j = 0; j < userChatBeanOnlines.size(); j++) {
-                        if(userChatBeanOnlines.get(j).userTable.getId() == userChatBeans.get(i).userChatBean.userTable.getId()) {
+                    for (int j = 0; j < userTableOnLines.size(); j++) {
+                        if(userTableOnLines.get(j).getId() == userChatBeans.get(i).userTable.getId()) {
                             isOnline = true;
                             break;
                         }
@@ -143,6 +145,15 @@ public class MainChatScreen extends TBaseScreen implements WsListener {
                     }
 
                     universalViewHolder.vbi(R.id.btnTop).setOnClickListener(v -> {
+
+                        for (int j = 0; j < CoreApp.appBean.userChatMsgBeanList.size(); j++) {
+                            if(CoreApp.appBean.userChatMsgBeanList.get(j).userTable.getId() == userChatBeans.get(i).userTable.getId()) {
+                                CoreApp.appBean.userChatMsgBeanList.remove(j);
+                                break;
+                            }
+                        }
+                        DBUtil.save(CoreApp.appBean);
+
                         userChatBeans.remove(i);
                         dpAdapter.notifyItemRemoved(i);
                         dpAdapter.notifyDataSetChanged();
@@ -154,12 +165,12 @@ public class MainChatScreen extends TBaseScreen implements WsListener {
 
                     universalViewHolder.vbi(R.id.contentBg).setOnClickListener(v -> {
                         ChatScreen chatScreen = ChatScreen.newInstance();
-                        chatScreen.setUserChatBean(userChatBeans.get(i).userChatBean);
+                        chatScreen.setUserTable(userChatBeans.get(i).userTable);
                         baseScreen.open(chatScreen);
                     });
 
                     for (int j = 0; j < CoreApp.appBean.userChatMsgBeanList.size(); j++) {
-                        if (CoreApp.appBean.userChatMsgBeanList.get(j).userChatBean.userTable.getId() == userChatBeans.get(i).userChatBean.userTable.getId()) {
+                        if (CoreApp.appBean.userChatMsgBeanList.get(j).userTable.getId() == userChatBeans.get(i).userTable.getId()) {
                             if (CoreApp.appBean.userChatMsgBeanList.get(j).chatMsgBeans.size() > 0) {
                                 ChatMsgBean chatMsgBean = CoreApp.appBean.userChatMsgBeanList.get(j).chatMsgBeans.get(0);
                                 if (chatMsgBean.type == 0) {
@@ -179,16 +190,16 @@ public class MainChatScreen extends TBaseScreen implements WsListener {
                                 }
                             } else {
                                 // 没聊天消息显示签名
-                                universalViewHolder.setText(R.id.userContent, userChatBeans.get(i).userChatBean.userTable.getContent());
+                                universalViewHolder.setText(R.id.userContent, userChatBeans.get(i).userTable.getContent());
                                 universalViewHolder.vbi(R.id.weiDuLin).setVisibility(View.GONE);
                             }
                         }
                     }
 
                     ImageView vs = (ImageView) universalViewHolder.vbi(R.id.headImg);
-                    if (!userChatBeans.get(i).userChatBean.userTable.getHeaderPath().equals(vs.getTag(R.id.headImg))) {
-                        vs.setTag(R.id.headImg, userChatBeans.get(i).userChatBean.userTable.getHeaderPath());
-                        ImgPhotoUtil.getPhoto(_dpActivity, userChatBeans.get(i).userChatBean.userTable.getHeaderPath(), (ImageView) universalViewHolder.vbi(R.id.headImg));
+                    if (!userChatBeans.get(i).userTable.getHeaderPath().equals(vs.getTag(R.id.headImg))) {
+                        vs.setTag(R.id.headImg, userChatBeans.get(i).userTable.getHeaderPath());
+                        ImgPhotoUtil.getPhoto(_dpActivity, userChatBeans.get(i).userTable.getHeaderPath(), (ImageView) universalViewHolder.vbi(R.id.headImg));
                     }
 
                 });
@@ -198,14 +209,18 @@ public class MainChatScreen extends TBaseScreen implements WsListener {
 
         if (CoreApp.appBean.userChatMsgBeanList.size() == 0) {
             nullLineLin.setVisibility(View.VISIBLE);
+            offlineLin.setVisibility(View.GONE);
         } else {
             nullLineLin.setVisibility(View.GONE);
+            offlineLin.setVisibility(View.GONE);
         }
+
+        getOnlineUser();
     }
 
     @Override
     public void showScreen() {
-        dpAdapter.notifyDataSetChanged();
+        getOnlineUser();
     }
 
     @Override
@@ -222,7 +237,7 @@ public class MainChatScreen extends TBaseScreen implements WsListener {
             BaseEn<ChatMsgBean<?>> stringChatMsgBean = (BaseEn<ChatMsgBean<?>>) object;
             for (int i = 0; i < CoreApp.appBean.userChatMsgBeanList.size(); i++) {
                 // 判断是否同一个人
-                if (stringChatMsgBean.data.userTableMine.getId() == CoreApp.appBean.userChatMsgBeanList.get(i).userChatBean.userTable.getId()) {
+                if (stringChatMsgBean.data.userTableMine.getId() == CoreApp.appBean.userChatMsgBeanList.get(i).userTable.getId()) {
                     // 判断最后一条是否一样
                     if (CoreApp.appBean.userChatMsgBeanList.get(i).chatMsgBeans.size() == 0
                             || CoreApp.appBean.userChatMsgBeanList.get(i).chatMsgBeans.get(0).time != stringChatMsgBean.data.time) {
@@ -258,8 +273,8 @@ public class MainChatScreen extends TBaseScreen implements WsListener {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(UpdateInfoEvent event) {
         for (int i = 0; i < userChatBeans.size(); i++) {
-            if (userChatBeans.get(i).userChatBean.userTable.getId() == CoreApp.appBean.tokenBean.userTable.getId()) {
-                userChatBeans.get(i).userChatBean.userTable = CoreApp.appBean.tokenBean.userTable;
+            if (userChatBeans.get(i).userTable.getId() == CoreApp.appBean.tokenBean.userTable.getId()) {
+                userChatBeans.get(i).userTable = CoreApp.appBean.tokenBean.userTable;
             }
         }
         dpAdapter.notifyDataSetChanged();

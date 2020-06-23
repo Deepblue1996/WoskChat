@@ -30,7 +30,7 @@ import com.deep.netdeep.bean.ChatMsgBean;
 import com.deep.netdeep.bean.UserChatMsgBean;
 import com.deep.netdeep.core.CoreApp;
 import com.deep.netdeep.net.bean.BaseEn;
-import com.deep.netdeep.net.bean.UserChatBean;
+import com.deep.netdeep.net.bean.UserTable;
 import com.deep.netdeep.socket.WebSocketUtil;
 import com.deep.netdeep.socket.WsListener;
 import com.deep.netdeep.util.ImgPhotoUtil;
@@ -83,14 +83,14 @@ public class ChatScreen extends TBaseScreen implements WsListener {
     private boolean hasTeSuHeight = false;
     private boolean isShowSoft = false;
 
-    private UserChatBean userChatBean;
+    private UserTable userTable;
 
     private LinearLayoutManager linearLayoutManager;
 
     private ViewTreeObserver.OnGlobalLayoutListener onGlobalLayoutListener;
 
-    public void setUserChatBean(UserChatBean userChatBean) {
-        this.userChatBean = userChatBean;
+    public void setUserTable(UserTable userTable) {
+        this.userTable = userTable;
     }
 
     /**
@@ -104,14 +104,19 @@ public class ChatScreen extends TBaseScreen implements WsListener {
     @Override
     public void init() {
 
-        initData();
+        DTimeUtil.run(350, () -> {
+            initData();
+            dpAdapter.notifyDataSetChanged();
 
-        userName.setText(userChatBean.userTable.getNickname() == null ? userChatBean.userTable.getUsername() : userChatBean.userTable.getNickname());
+            recyclerView.post(() -> recyclerView.scrollToPosition(0));
+        });
+
+        userName.setText(userTable.getNickname() == null ? userTable.getUsername() : userTable.getNickname());
         backTouch.setOnTouchListener((v, event) -> TouchExt.alpTouch(v, event, this::closeEx));
         sendBt.setOnTouchListener((v, event) -> TouchExt.alpTouch(v, event, () -> {
             ChatMsgBean<String> stringChatMsgBean = new ChatMsgBean<>();
             stringChatMsgBean.userTableMine = CoreApp.appBean.tokenBean.userTable;
-            stringChatMsgBean.userTableHere = userChatBean.userTable;
+            stringChatMsgBean.userTableHere = userTable;
             stringChatMsgBean.type = 0;
             stringChatMsgBean.time = System.currentTimeMillis();
             stringChatMsgBean.data = contentEdit.getText().toString();
@@ -254,9 +259,12 @@ public class ChatScreen extends TBaseScreen implements WsListener {
         recyclerView.setAdapter(dpAdapter);
         ((SimpleItemAnimator) Objects.requireNonNull(recyclerView.getItemAnimator())).setSupportsChangeAnimations(false);
 
-        recyclerView.post(() -> recyclerView.scrollToPosition(0));
-
         WebSocketUtil.get().addListener(this);
+    }
+
+    @Override
+    public SCREEN screenOpenAnim() {
+        return SCREEN.Horizontal;
     }
 
     private void initData() {
@@ -264,7 +272,7 @@ public class ChatScreen extends TBaseScreen implements WsListener {
         boolean haveChat = false;
 
         for (int i = 0; i < CoreApp.appBean.userChatMsgBeanList.size(); i++) {
-            if (CoreApp.appBean.userChatMsgBeanList.get(i).userChatBean.userTable.getId() == userChatBean.userTable.getId()) {
+            if (CoreApp.appBean.userChatMsgBeanList.get(i).userTable.getId() == userTable.getId()) {
                 for (int j = 0; j < CoreApp.appBean.userChatMsgBeanList.get(i).chatMsgBeans.size(); j++) {
                     CoreApp.appBean.userChatMsgBeanList.get(i).chatMsgBeans.get(j).isRead = true;
                 }
@@ -276,7 +284,7 @@ public class ChatScreen extends TBaseScreen implements WsListener {
 
         if (!haveChat) {
             UserChatMsgBean userChatMsgBean = new UserChatMsgBean();
-            userChatMsgBean.userChatBean = userChatBean;
+            userChatMsgBean.userTable = userTable;
             userChatMsgBean.chatMsgBeans = new ArrayList<>();
             CoreApp.appBean.userChatMsgBeanList.add(userChatMsgBean);
             DBUtil.save(CoreApp.appBean);
@@ -286,7 +294,7 @@ public class ChatScreen extends TBaseScreen implements WsListener {
     private void saveData() {
 
         for (int i = 0; i < CoreApp.appBean.userChatMsgBeanList.size(); i++) {
-            if (CoreApp.appBean.userChatMsgBeanList.get(i).userChatBean.userTable.getId() == userChatBean.userTable.getId()) {
+            if (CoreApp.appBean.userChatMsgBeanList.get(i).userTable.getId() == userTable.getId()) {
                 CoreApp.appBean.userChatMsgBeanList.get(i).chatMsgBeans.clear();
                 CoreApp.appBean.userChatMsgBeanList.get(i).chatMsgBeans.addAll(chatMsgBeans);
                 DBUtil.save(CoreApp.appBean);
@@ -316,7 +324,7 @@ public class ChatScreen extends TBaseScreen implements WsListener {
             // 先判断是否存在于数据
             for (int i = 0; i < CoreApp.appBean.userChatMsgBeanList.size(); i++) {
                 // 判断是否同一个人
-                if (userChatBean.userTable.getId() == CoreApp.appBean.userChatMsgBeanList.get(i).userChatBean.userTable.getId()) {
+                if (userTable.getId() == CoreApp.appBean.userChatMsgBeanList.get(i).userTable.getId()) {
                     // 判断最后一条是否一样
                     if (CoreApp.appBean.userChatMsgBeanList.get(i).chatMsgBeans.size() == 0
                             || CoreApp.appBean.userChatMsgBeanList.get(i).chatMsgBeans.get(0).time != stringChatMsgBean.data.time) {
@@ -329,12 +337,12 @@ public class ChatScreen extends TBaseScreen implements WsListener {
             }
 
             // 是否是当前会话
-            if (stringChatMsgBean.data.userTableMine.getId() == userChatBean.userTable.getId()) {
+            if (stringChatMsgBean.data.userTableMine.getId() == userTable.getId()) {
                 Lag.i("子会话同步消息");
                 chatMsgBeans.clear();
                 for (int i = 0; i < CoreApp.appBean.userChatMsgBeanList.size(); i++) {
                     // 判断是否同一个人
-                    if (userChatBean.userTable.getId() == CoreApp.appBean.userChatMsgBeanList.get(i).userChatBean.userTable.getId()) {
+                    if (userTable.getId() == CoreApp.appBean.userChatMsgBeanList.get(i).userTable.getId()) {
                         for (int j = 0; j < CoreApp.appBean.userChatMsgBeanList.get(i).chatMsgBeans.size(); j++) {
                             CoreApp.appBean.userChatMsgBeanList.get(i).chatMsgBeans.get(j).isRead = true;
                         }

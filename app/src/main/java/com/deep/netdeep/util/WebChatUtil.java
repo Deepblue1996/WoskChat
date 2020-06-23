@@ -3,8 +3,7 @@ package com.deep.netdeep.util;
 import com.deep.netdeep.bean.ChatMsgBean;
 import com.deep.netdeep.core.CoreApp;
 import com.deep.netdeep.net.bean.BaseEn;
-import com.deep.netdeep.net.bean.TokenChatBean;
-import com.deep.netdeep.net.bean.TokenChatUBean;
+import com.deep.netdeep.net.bean.TokenBean;
 import com.deep.netdeep.socket.WebSocketUtil;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -25,14 +24,12 @@ public class WebChatUtil {
                 /**
                  * 请求会话id
                  */
-                BaseEn<TokenChatUBean> baseEn = new BaseEn<>();
+                BaseEn<TokenBean> baseEn = new BaseEn<>();
                 baseEn.code = 10000;
                 baseEn.msg = "login success to connect";
-                TokenChatUBean tokenChatUBean = new TokenChatUBean();
-                TokenChatBean tokenChatBean = new TokenChatBean();
+                TokenBean tokenChatBean = new TokenBean();
                 tokenChatBean.token = CoreApp.appBean.tokenBean.token;
-                tokenChatUBean.tokenChatBean = tokenChatBean;
-                baseEn.data = tokenChatUBean;
+                baseEn.data = tokenChatBean;
                 WebSocketUtil.get().send(new Gson().toJson(baseEn));
                 if (endListener != null) {
                     endListener.end(null);
@@ -42,10 +39,10 @@ public class WebChatUtil {
                 /**
                  * 发送登陆Token
                  */
-                BaseEn<TokenChatUBean> tokenChatUBeanBaseEn = new BaseEn<>();
+                BaseEn<TokenBean> tokenChatUBeanBaseEn = new BaseEn<>();
                 tokenChatUBeanBaseEn.code = 20000;
                 tokenChatUBeanBaseEn.msg = "client get service 10000";
-                tokenChatUBeanBaseEn.data = CoreApp.tokenChatUBean;
+                tokenChatUBeanBaseEn.data = CoreApp.appBean.tokenBean;
                 WebSocketUtil.get().send(new Gson().toJson(tokenChatUBeanBaseEn));
                 if (endListener != null) {
                     endListener.end(null);
@@ -68,14 +65,6 @@ public class WebChatUtil {
         }
         switch (baseEn.code) {
             case 10000:
-                /**
-                 * 获取对话id
-                 */
-                Type type = new TypeToken<BaseEn<TokenChatUBean>>() {
-                }.getType();
-                BaseEn<TokenChatUBean> tokenChatUBeanBaseEn = new Gson().fromJson(msg, type);
-                CoreApp.tokenChatUBean = tokenChatUBeanBaseEn.data;
-                CoreApp.tokenChatUBean.tokenChatBean.token = CoreApp.appBean.tokenBean.token;
                 put(20000, endListener);
                 break;
             case 20000:

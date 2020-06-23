@@ -59,7 +59,7 @@ public class MainMenScreen extends TBaseScreen {
     @Override
     public void init() {
 
-        if (CoreApp.appBean.tokenBean.token == null || CoreApp.tokenChatUBean.tokenChatBean == null) {
+        if (CoreApp.appBean.tokenBean.token == null) {
 
             userName.setText("点击登陆");
 
@@ -91,7 +91,7 @@ public class MainMenScreen extends TBaseScreen {
     @SuppressLint("SetTextI18n")
     public void upInfo() {
         userName.setText(CoreApp.appBean.tokenBean.userTable.getNickname());
-        userId.setText("ACC ID:" + CoreApp.tokenChatUBean.tokenChatBean.asLongText);
+        userId.setText("USER ID:" + CoreApp.appBean.tokenBean.userTable.getId());
         ImgPhotoUtil.getPhoto(_dpActivity, CoreApp.appBean.tokenBean.userTable.getHeaderPath(), headImg);
     }
 

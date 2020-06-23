@@ -70,6 +70,8 @@ public class MainScreen extends TBaseScreen implements WsListener {
     TextView memTv;
     @BindView(R.id.logoImg)
     ImageView logoImg;
+    @BindView(R.id.searchImg)
+    ImageView searchImg;
     @BindView(R.id.logoTv)
     TextView logoTv;
 
@@ -106,6 +108,7 @@ public class MainScreen extends TBaseScreen implements WsListener {
                 selectTabUI(1);
             }
         });
+        searchImg.setOnClickListener(v -> open(SearchScreen.class));
 
         logoImg.setOnTouchListener((v, event) -> TouchExt.alpTouch(v, event, this::logoAnim));
 
@@ -116,7 +119,6 @@ public class MainScreen extends TBaseScreen implements WsListener {
                 .add(mainChatScreen)
                 .add(mainMenScreen)
                 .create();
-
     }
 
     private void selectTabUI(int item) {
@@ -137,7 +139,9 @@ public class MainScreen extends TBaseScreen implements WsListener {
     }
 
     public void loginAutoConnect() {
-        Dove.addGlobalHeader("token", CoreApp.appBean.tokenBean.token);
+        if (CoreApp.appBean.tokenBean.token != null) {
+            Dove.addGlobalHeader("token", CoreApp.appBean.tokenBean.token);
+        }
         Dove.flyLifeOnlyNet(CoreApp.jobTask.loginEffective(CoreApp.appBean.tokenBean.token),
                 new Dover<BaseEn<String>>() {
                     @SuppressLint("SetTextI18n")
@@ -230,7 +234,7 @@ public class MainScreen extends TBaseScreen implements WsListener {
                 BaseEn<ChatMsgBean<?>> stringChatMsgBean = (BaseEn<ChatMsgBean<?>>) object;
                 for (int i = 0; i < CoreApp.appBean.userChatMsgBeanList.size(); i++) {
                     // 判断是否同一个人
-                    if (stringChatMsgBean.data.userTableMine.getId() == CoreApp.appBean.userChatMsgBeanList.get(i).userChatBean.userTable.getId()) {
+                    if (stringChatMsgBean.data.userTableMine.getId() == CoreApp.appBean.userChatMsgBeanList.get(i).userTable.getId()) {
                         // 判断最后一条是否一样
                         if (CoreApp.appBean.userChatMsgBeanList.get(i).chatMsgBeans.size() > 0 && CoreApp.appBean.userChatMsgBeanList.get(i).chatMsgBeans.get(0).time == stringChatMsgBean.data.time) {
                             Lag.i("主会话增加消息，消息已记录");

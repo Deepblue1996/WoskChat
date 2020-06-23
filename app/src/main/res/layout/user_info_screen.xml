@@ -91,18 +91,6 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/userACCId"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="100dp"
-                    android:layout_marginTop="5dp"
-                    android:ellipsize="end"
-                    android:lines="1"
-                    android:text="ACC ID: 15434-53438737-83783-873573"
-                    android:textColor="@color/normalText"
-                    android:textSize="@dimen/smallFontSize" />
-
-                <TextView
                     android:id="@+id/userId"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
