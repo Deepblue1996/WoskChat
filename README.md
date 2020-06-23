@@ -1,4 +1,6 @@
-<img src="https://raw.githubusercontent.com/Deepblue1996/WoskChat/master/app/src/main/res/mipmap-xhdpi/ic_logo.png" width="100"/>
+<img src="https://raw.githubusercontent.com/Deepblue1996/WoskChat/master/app/src/main/res/mipmap-xhdpi/ic_logo.png" width="100"/> 
+
+# WoskChat
 
 <a href="http://developer.android.com/index.html"><img src="https://img.shields.io/badge/platform-android-green.svg"></a>
 [![](https://jitpack.io/v/Deepblue1996/Bun.svg)](https://jitpack.io/#Deepblue1996/Bun)
@@ -12,7 +14,7 @@ An instant chat App developed based on THE DpWorkAX framework.
 
 ## LICENSE
 
-<pre><code>Copyright 2018 Deepblue
+<pre><code>Copyright 2020 Deepblue
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
