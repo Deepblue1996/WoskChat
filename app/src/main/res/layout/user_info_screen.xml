@@ -52,7 +52,7 @@
             android:background="@color/mBackGround"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:padding="5dp">
+            android:padding="15dp">
 
             <com.prohua.roundlayout.RoundAngleFrameLayout
                 android:layout_width="wrap_content"
@@ -79,7 +79,6 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
                 android:orientation="vertical">
 
                 <TextView

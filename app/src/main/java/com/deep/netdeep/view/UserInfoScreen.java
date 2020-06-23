@@ -228,4 +228,8 @@ public class UserInfoScreen extends TBaseScreen {
         ImgPhotoUtil.getPhoto(_dpActivity, CoreApp.appBean.tokenBean.userTable.getHeaderPath(), headImg);
     }
 
+    @Override
+    public SCREEN screenOpenAnim() {
+        return SCREEN.Horizontal;
+    }
 }

@@ -3,6 +3,7 @@ package com.deep.netdeep.view;
 import android.annotation.SuppressLint;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.EditText;
@@ -55,6 +56,8 @@ public class ChatScreen extends TBaseScreen implements WsListener {
     ConstraintLayout backLin;
     @BindView(R.id.backTouch)
     ImageView backTouch;
+    @BindView(R.id.infoMemTouch)
+    ImageView infoMemTouch;
     @BindView(R.id.userName)
     TextView userName;
     @BindView(R.id.contentEdit)
@@ -134,6 +137,12 @@ public class ChatScreen extends TBaseScreen implements WsListener {
 
             chatMsgBeans.get(0).isRead = true;
             saveData();
+        }));
+
+        infoMemTouch.setOnTouchListener((v, event) -> TouchExt.alpTouch(v, event, () -> {
+            UserChatInfoScreen userChatInfoScreen = new UserChatInfoScreen();
+            userChatInfoScreen.setUserTable(userTable);
+            open(userChatInfoScreen);
         }));
 
         contentEdit.setOnClickListener(v -> InputManagerUtil.showSoftInputFromWindow(_dpActivity, contentEdit));
