@@ -10,9 +10,8 @@ An instant chat App developed based on THE DpWorkAX framework.
 
 Service Code Adress: <a href="https://github.com/Deepblue1996/TcpService">Spring boot + netty</a>
 
-<img src="https://raw.githubusercontent.com/Deepblue1996/WoskChat/master/img/1.jpg" width="300"/> <img src="https://raw.githubusercontent.com/Deepblue1996/WoskChat/master/img/2.jpg" width="300"/>
 
-<img src="https://raw.githubusercontent.com/Deepblue1996/WoskChat/master/img/3.jpg" width="300"/> <img src="https://raw.githubusercontent.com/Deepblue1996/WoskChat/master/img/4.jpg" width="300"/>
+<img src="https://raw.githubusercontent.com/Deepblue1996/WoskChat/master/img/1.jpg" width="150"/> <img src="https://raw.githubusercontent.com/Deepblue1996/WoskChat/master/img/2.jpg" width="150"/> <img src="https://raw.githubusercontent.com/Deepblue1996/WoskChat/master/img/3.jpg" width="150"/> <img src="https://raw.githubusercontent.com/Deepblue1996/WoskChat/master/img/4.jpg" width="150"/>
 
 ## LICENSE
 
